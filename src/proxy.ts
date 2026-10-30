@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-const OPEN = ['/login', '/forgot', '/auth']
+const OPEN = ['/login', '/forgot', '/auth', '/register']
 export async function proxy(req: NextRequest) {
   let res = NextResponse.next({ request: req })
   const sb = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
@@ -16,4 +16,5 @@ export async function proxy(req: NextRequest) {
   if (user && p === '/login') return NextResponse.redirect(new URL('/', req.url))
   return res
 }
-export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] }
+// Los archivos estáticos (imágenes, iconos) son públicos: sin esto, el login no podría cargar su logo ni su fondo.
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'] }

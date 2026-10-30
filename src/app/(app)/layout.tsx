@@ -1,19 +1,18 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { signOut } from '../actions'
+import Sidebar, { type NavItem } from '@/components/sidebar'
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const sb = createClient()
   const { data: { user } } = await sb.auth.getUser()
   if (!user) redirect('/login')
-  const { data: me } = await sb.from('profiles').select('full_name, role, active').eq('id', user.id).single()
-  if (me && me.active === false) redirect('/auth/inactive')
-  const links = [{ href: '/', label: 'Panel' }, { href: '/dives', label: 'Mis inmersiones' }, { href: '/dives/new', label: 'Nueva inmersión' }, { href: '/profile', label: 'Mi ficha' }, ...(me?.role === 'admin' ? [{ href: '/admin', label: 'Gestión de la clase' }, { href: '/admin/dives', label: 'Inmersiones de la clase' }] : [])]
-  return <div className="min-h-screen md:flex">
-    <aside className="bg-navy p-4 text-white md:min-h-screen md:w-60">
-      <div className="mb-4 text-xl font-bold">🤿 LogBook</div>
-      <nav className="flex gap-2 md:flex-col">{links.map((l) => <Link key={l.href} href={l.href} className="rounded-lg px-3 py-2 hover:bg-deep">{l.label}</Link>)}</nav>
-      <form action={signOut} className="mt-4"><button className="rounded-lg px-3 py-2 text-sm text-teal hover:bg-deep">Cerrar sesión</button></form>
-    </aside>
-    <main className="flex-1 p-4 md:p-8"><p className="mb-4 text-sm text-slate-500">{me?.full_name || user.email} · {me?.role === 'admin' ? 'Profesor' : 'Alumno'}</p>{children}</main></div>
+  const { data: me } = await sb.from('profiles').select('full_name, role, active, avatar_path').eq('id', user.id).single()
+  if (!me || me.active === false) redirect('/auth/inactive')
+  const avatar = me.avatar_path ? (await sb.storage.from('avatars').createSignedUrl(me.avatar_path, 3600)).data?.signedUrl || undefined : undefined
+  const items: NavItem[] = [
+    { href: '/', label: 'Panel', icon: 'home', group: 'Mi libro', hint: 'Resumen general' }, { href: '/dives', label: 'Mis inmersiones', icon: 'list', group: 'Mi libro', hint: 'Historial completo' }, { href: '/dives/new', label: 'Nueva inmersión', icon: 'plus', group: 'Mi libro', hint: 'Registrar' },
+    { href: '/profile', label: 'Ficha del buceador', icon: 'user', group: 'Mi libro', hint: 'Perfil y titulaciones' }, { href: '/equipment', label: 'Mi material', icon: 'check', group: 'Mi libro', hint: 'Checklist de equipo' },
+    ...(me.role === 'admin' ? [{ href: '/admin', label: 'Gestión de la clase', icon: 'users', group: 'Profesor', hint: 'Alumnos y cuentas' }, { href: '/admin/dives', label: 'Inmersiones de la clase', icon: 'clip', group: 'Profesor', hint: 'Registros y revisión' }, { href: '/admin/invitations', label: 'Enlaces de registro', icon: 'link', group: 'Profesor', hint: 'Altas de alumnos' }] : []),
+  ]
+  return <div className="flex min-h-screen"><Sidebar items={items} name={me.full_name || user.email || 'Usuario'} role={me.role === 'admin' ? 'Profesor' : 'Alumno'} avatar={avatar} />
+    <main className="app-main min-w-0 flex-1 px-4 pb-12 pt-20 md:px-8 md:pt-8"><div className="page-enter mx-auto w-full" style={{ maxWidth: 1760 }}>{children}</div></main></div>
 }

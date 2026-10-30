@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/admin'
 import { fetchAll, summarize } from '@/lib/filters'
 import { Msg } from '../../../../auth-shell'
 import { setPassword, setActive } from '../actions'
+import DeleteStudent from './delete-student'
 export default async function Student(props: { params: Promise<{ id: string }>; searchParams: Promise<{ ok?: string; error?: string }> }) {
   const params = await props.params, searchParams = await props.searchParams
   const { sb } = await requireAdmin()
@@ -23,5 +24,6 @@ export default async function Student(props: { params: Promise<{ id: string }>; 
     <section className="rounded-xl bg-white p-4 shadow-sm"><h2 className="mb-3 font-semibold text-deep">Cuenta</h2><Msg error={searchParams.error} ok={searchParams.ok} />
       <form action={setPassword} className="mb-3 flex flex-wrap gap-2"><input type="hidden" name="id" value={params.id} /><input name="password" type="password" minLength={10} required placeholder="Nueva contraseña (mín. 10)" className="input max-w-xs" autoComplete="new-password" /><button className="btn">Cambiar contraseña</button></form>
       <form action={setActive}><input type="hidden" name="id" value={params.id} /><input type="hidden" name="active" value={p.active ? 'false' : 'true'} /><button className="rounded-lg border px-4 py-2">{p.active ? 'Desactivar cuenta' : 'Reactivar cuenta'}</button></form>
-      <p className="mt-2 text-xs text-slate-500">Desactivar impide iniciar sesión; los datos se conservan y se puede revertir.</p></section></div>
+      <p className="mt-2 text-xs text-slate-500">Desactivar impide iniciar sesión; los datos se conservan y se puede revertir.</p>
+      <div className="mt-4 border-t pt-4"><DeleteStudent id={params.id} /></div></section></div>
 }

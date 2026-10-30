@@ -21,6 +21,8 @@ export async function reviewDive(fd: FormData) {
   const back = (e?: string) => redirect(e ? `/dives/${id}?error=${encodeURIComponent(e)}&from=${encodeURIComponent(dest)}` : dest)
   if (!['pending', 'reviewed', 'needs_correction'].includes(status)) back('Estado no válido.')
   if (status === 'needs_correction' && !comment) back('Escribe un comentario explicando qué hay que corregir.')
+  const { data: dv } = await sb.from('dives').select('user_id').eq('id', id).maybeSingle()
+  if (!dv || dv.user_id === user!.id) back('Las inmersiones propias no se revisan.')
   const { error } = await sb.from('dive_reviews').insert({ dive_id: id, reviewer_id: user!.id, status, comment: comment || null })
   back(error?.message)
 }

@@ -34,7 +34,7 @@ export default async function Dives(props: { searchParams: Promise<P & { page?: 
     {!data?.length ? <p className="text-slate-500">{filtered ? 'Ninguna inmersión coincide con los filtros.' : 'Todavía no has registrado ninguna inmersión.'}</p> :
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm"><table className="w-full text-left text-sm"><thead className="bg-slate-100"><tr>
         {COLS.map(([k, l]) => <th key={k} className="p-3"><Link href={q({ sort: k, dir: sort === k && !asc ? 'asc' : 'desc', page: 1 })}>{l}{sort === k ? (asc ? ' ▲' : ' ▼') : ''}</Link></th>)}</tr></thead>
-        <tbody>{data.map((d: any) => <tr key={d.id} className="border-t hover:bg-slate-50">
+        <tbody>{data.map((d: any) => <tr key={d.id} className="border-t row-hover">
           {[d.dive_number, d.dive_date, d.site, d.max_depth_m, d.duration_min, d.work_task?.slice(0, 40) ?? '—', d.rating ?? '—'].map((c, i) => <td key={i} className="p-3"><Link href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`} className="block">{c}{i === 0 && d.modified_since_review ? ' ✎' : ''}</Link></td>)}</tr>)}</tbody></table></div>}
     <div className="mt-4 flex items-center gap-3 text-sm">{page > 1 && <Link href={q({ page: page - 1 })} className="rounded border px-3 py-1">← Anterior</Link>}<span>Página {page} de {pages}</span>{page < pages && <Link href={q({ page: page + 1 })} className="rounded border px-3 py-1">Siguiente →</Link>}</div></>
 }

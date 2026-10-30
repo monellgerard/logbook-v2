@@ -58,6 +58,11 @@ describe('profesor y revisión', () => {
     expect((await svc.from('dives').select('site').eq('id', a1.id).single()).data!.site).toBe('Test')
   })
   it('un alumno no puede revisarse a sí mismo', async () => { expect((await U.alice.db.from('dive_reviews').insert({ dive_id: a1.id, reviewer_id: U.alice.id, status: 'reviewed' })).error).not.toBeNull() })
+  it('el profesor no puede revisar sus propias inmersiones', async () => {
+    const own = await U.teacher.db.from('dives').insert({ ...dive(), user_id: U.teacher.id }).select().single()
+    expect(own.error).toBeNull()
+    expect((await U.teacher.db.from('dive_reviews').insert({ dive_id: own.data!.id, reviewer_id: U.teacher.id, status: 'reviewed' })).error).not.toBeNull()
+  })
   it('flujo completo: comentario → edición del alumno → vuelve a pendiente y marcada', async () => {
     expect((await U.teacher.db.from('dive_reviews').insert({ dive_id: a1.id, reviewer_id: U.teacher.id, status: 'needs_correction', comment: 'Revisa la profundidad' })).error).toBeNull()
     expect((await svc.from('dives').select('review_status').eq('id', a1.id).single()).data!.review_status).toBe('needs_correction')

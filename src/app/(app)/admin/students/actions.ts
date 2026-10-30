@@ -37,3 +37,12 @@ export async function setActive(fd: FormData) {
   if (r.error) go(back, 'error', r.error.message)
   revalidatePath('/admin'); go(back, 'ok', active ? 'Cuenta reactivada.' : 'Cuenta desactivada. No podrá iniciar sesión.')
 }
+export async function deleteStudent(id: string) {
+  await studentOnly(id)
+  const a = adminClient()
+  const { data: files } = await a.storage.from('avatars').list(id)
+  if (files?.length) await a.storage.from('avatars').remove(files.map((f) => `${id}/${f.name}`))
+  const { error } = await a.auth.admin.deleteUser(id)   // borra en cascada perfil, inmersiones, certificaciones y fotos
+  if (error) go(`/admin/students/${id}`, 'error', error.message)
+  revalidatePath('/admin'); go('/admin', 'ok', 'Cuenta eliminada definitivamente.')
+}
