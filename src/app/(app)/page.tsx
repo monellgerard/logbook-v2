@@ -1,56 +1,39 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { fetchAll, summarize, monthly, MONTHS } from '@/lib/filters'
-import EquipmentCard from './equipment-card'
-export default async function Dashboard(props: { searchParams: Promise<{ year?: string; metric?: string }> }) {
-  const searchParams = await props.searchParams
+import Icon from '@/components/icon'
+export default async function Dashboard(props: { searchParams: Promise<{ year?: string }> }) {
+  const sp = await props.searchParams
   const sb = createClient()
   const { data: { user } } = await sb.auth.getUser()
   const uid = user!.id
   let all: any[]
-  try { all = await fetchAll(() => sb.from('dives').select('id, dive_number, dive_date, site, work_task, rating, duration_min, max_depth_m').eq('user_id', uid).order('dive_date').order('id')) }
+  try { all = await fetchAll(() => sb.from('dives').select('id, dive_number, dive_date, site, duration_min, max_depth_m').eq('user_id', uid).order('dive_date').order('id')) }
   catch (e: any) { return <p className="text-red-700">Error al cargar datos: {e.message}</p> }
-  const [{ data: me }, eq, { data: certs }] = await Promise.all([
+  const [{ data: me }, { data: certs }] = await Promise.all([
     sb.from('profiles').select('full_name').eq('id', uid).single(),
-    sb.from('equipment_items').select('id, name, checked').eq('user_id', uid).order('created_at'),
     sb.from('certifications').select('title, expires_on').eq('user_id', uid).not('expires_on', 'is', null).order('expires_on')])
-  const cur = String(new Date().getFullYear()), year = searchParams.year || cur
+  const cur = String(new Date().getFullYear()), year = sp.year || cur
   const years = [...new Set([cur, ...all.map((d) => d.dive_date.slice(0, 4))])].sort().reverse()
-  const t = summarize(all), y = summarize(all.filter((d) => d.dive_date.startsWith(year))), m = monthly(all, year)
-  const byDives = searchParams.metric === 'n', mq = byDives ? '&metric=n' : '', val = (x: { n: number; hours: number }) => (byDives ? x.n : x.hours), top = Math.max(1, ...m.map(val))
-  const sites = new Map<string, number>(); all.forEach((d) => sites.set(d.site, (sites.get(d.site) ?? 0) + 1))
-  const fav = [...sites.entries()].sort((a, b) => b[1] - a[1])[0]
-  const rated = all.filter((d) => d.rating != null), avgRating = rated.length ? (rated.reduce((s, d) => s + d.rating, 0) / rated.length).toFixed(1) : '—'
-  const avgDepth = all.length ? (all.reduce((s, d) => s + Number(d.max_depth_m), 0) / all.length).toFixed(1) : '—'
+  const t = summarize(all), y = summarize(all.filter((d) => d.dive_date.startsWith(year))), m = monthly(all, year), top = Math.max(1, ...m.map((x) => x.n))
   const recent = [...all].sort((a, b) => b.dive_date.localeCompare(a.dive_date) || (b.dive_number ?? 0) - (a.dive_number ?? 0)).slice(0, 5)
-  const limit = new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10), today = new Date().toISOString().slice(0, 10)
-  const soon = (certs ?? []).filter((c) => c.expires_on && c.expires_on <= limit)
-  const cards = [['Inmersiones', t.n], ['Horas totales', t.hours.toFixed(1)], ['Profundidad máx.', t.maxDepth !== null ? `${t.maxDepth} m` : '—'], ['Duración media', t.avg !== null ? `${t.avg} min` : '—'],
-    [`Inmersiones ${year}`, y.n], [`Horas ${year}`, y.hours.toFixed(1)], ['Última inmersión', t.last ?? '—'], ['Valoración media', avgRating]]
-  return <div className="mx-auto max-w-6xl space-y-6">
-    <header className="flex flex-wrap items-end justify-between gap-6 pb-2"><div>
-      <p className="eyebrow">Panel · {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Madrid' })}</p>
-      <h1 className="display mt-3">Hola, {me?.full_name?.split(' ')[0] || 'buceador'}.</h1>
-      <p className="mt-3 max-w-xl text-slate-500">{t.n ? `${t.n} inmersiones y ${t.hours.toFixed(1)} h bajo el agua${t.maxDepth !== null ? `, profundidad máxima ${t.maxDepth} m` : ''}.` : 'Registra tu primera inmersión para empezar tu historial.'}</p></div>
-      <div className="flex gap-2"><Link href="/dives/new" className="btn">Nueva inmersión</Link><Link href="/dives" className="pill">Historial</Link></div></header>
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{cards.map(([k, v]) => <div key={k} className="card-lift rounded-xl bg-white p-4"><div className="eyebrow">{k}</div><div className="mt-2 text-3xl font-light tracking-tight text-navy">{v}</div></div>)}</div>
-    <div className="grid gap-6 lg:grid-cols-3">
-      <section className="rounded-2xl bg-white p-5 shadow-sm lg:col-span-2"><div className="mb-3 flex flex-wrap items-center gap-2"><h2 className="font-semibold text-deep">Actividad por meses · {year}</h2>
-        <div className="ml-auto flex gap-1 text-sm">{years.map((a) => <Link key={a} href={`/?year=${a}${mq}`} className={`rounded-lg border px-3 py-1 ${a === year ? 'bg-teal-dark text-white' : ''}`}>{a}</Link>)}</div></div>
-        <div className="mb-3 flex gap-1 text-sm"><Link href={`/?year=${year}`} className={`rounded-lg border px-3 py-1 ${!byDives ? 'bg-teal-dark text-white' : ''}`}>Horas</Link><Link href={`/?year=${year}&metric=n`} className={`rounded-lg border px-3 py-1 ${byDives ? 'bg-teal-dark text-white' : ''}`}>Inmersiones</Link></div>
-        <div className="flex h-44 items-end gap-1 sm:gap-2">{m.map((x, i) => <Link key={i} href={`/dives?year=${year}&month=${i + 1}`} className="flex h-full flex-1 flex-col items-center justify-end text-xs" title={`${MONTHS[i]}: ${x.n} inmersiones, ${x.hours.toFixed(1)} h`}>
-          <span className="text-slate-500">{val(x) ? (byDives ? x.n : x.hours.toFixed(1)) : ''}</span><div className="bar-grow bar-v w-full" style={{ height: `${(val(x) / top) * 100}%`, minHeight: x.n ? 4 : 0, animationDelay: `${i * 45}ms` }} /><span className="mt-1 text-slate-500">{MONTHS[i].slice(0, 3)}</span></Link>)}</div></section>
-      <EquipmentCard items={eq.data ?? []} error={!!eq.error} detail={eq.error?.message} showLink /></div>
-    <div className="grid gap-6 lg:grid-cols-3">
-      <section className="rounded-2xl bg-white p-5 shadow-sm lg:col-span-2"><div className="mb-3 flex items-center justify-between"><h2 className="font-semibold text-deep">Últimas inmersiones</h2><Link href="/dives" className="text-sm text-teal-dark">Ver todas →</Link></div>
-        {!recent.length ? <p className="text-sm text-slate-500">Todavía no hay inmersiones.</p> : <ul className="divide-y">{recent.map((d) => <li key={d.id}><Link href={`/dives/${d.id}?from=%2F`} className="flex items-center gap-3 py-2.5 text-sm hover:opacity-80">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-teal/15 font-semibold text-teal-dark">{d.dive_number}</span><span className="min-w-0 flex-1"><span className="block truncate font-medium">{d.site}</span><span className="block truncate text-xs text-slate-500">{d.dive_date}{d.work_task ? ` · ${d.work_task}` : ''}</span></span>
-          <span className="text-right text-xs text-slate-500"><span className="block">{d.max_depth_m} m</span><span className="block">{d.duration_min} min</span></span></Link></li>)}</ul>}</section>
-      <section className="rounded-2xl bg-white p-5 shadow-sm"><h2 className="mb-3 font-semibold text-deep">Resumen</h2>
-        <dl className="space-y-2 text-sm"><div className="flex justify-between"><dt className="text-slate-500">Lugar más frecuente</dt><dd className="max-w-[55%] truncate text-right font-medium">{fav ? `${fav[0]} (${fav[1]})` : '—'}</dd></div>
-          <div className="flex justify-between"><dt className="text-slate-500">Profundidad media</dt><dd className="font-medium">{avgDepth !== '—' ? `${avgDepth} m` : '—'}</dd></div>
-          <div className="flex justify-between"><dt className="text-slate-500">Primera inmersión</dt><dd className="font-medium">{t.first ?? '—'}</dd></div></dl>
-        <h3 className="mb-1 mt-4 text-sm font-semibold text-deep">Certificaciones</h3>
-        {soon.length ? <ul className="space-y-1 text-sm">{soon.map((c, i) => <li key={i} className={c.expires_on! < today ? 'text-red-700' : 'text-amber-800'}>{c.title}: {c.expires_on! < today ? 'caducada el' : 'caduca el'} {c.expires_on}</li>)}</ul> : <p className="text-sm text-slate-500">Ninguna caduca en los próximos 90 días.</p>}
-        <Link href="/profile#certificaciones" className="mt-2 inline-block text-sm text-teal-dark">Gestionar certificaciones →</Link></section></div></div>
+  const limit = new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10), soon = (certs ?? []).filter((c) => c.expires_on && c.expires_on <= limit)
+  const first = me?.full_name?.split(' ')[0] || 'buceador'
+  const stats: [string, string | number, string, string][] = [['Inmersiones', t.n, `${y.n} en ${year}`, 'list'], ['Horas bajo el agua', t.hours.toFixed(1), `${y.hours.toFixed(1)} h en ${year}`, 'sun'], ['Profundidad máxima', t.maxDepth !== null ? `${t.maxDepth} m` : '—', t.avg !== null ? `Media: ${t.avg} min` : 'Sin datos', 'down'], ['Última inmersión', t.last ?? '—', t.first ? `Desde ${t.first}` : 'Sin datos', 'check']]
+  return <div className="space-y-6">
+    <header className="flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow capitalize">{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Madrid' })}</p>
+      <h1 className="display mt-1">Hola, {first} <span className="wave">👋</span></h1></div><Link href="/dives/new" className="btn hidden sm:inline-flex"><Icon name="plus" className="h-5 w-5" />Nueva inmersión</Link></header>
+    {soon.length > 0 && <Link href="/profile#certificaciones" className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 text-sm text-amber-800"><Icon name="award" className="h-5 w-5 shrink-0" /><span>Tienes {soon.length} {soon.length === 1 ? 'certificación' : 'certificaciones'} caducada o a punto de caducar. <b>Revisar</b></span></Link>}
+    {!all.length ? <section className="bg-white rounded-2xl p-8 text-center"><div className="tint mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full"><Icon name="plus" className="h-8 w-8" /></div>
+        <h2 className="text-xl font-bold text-navy">Registra tu primera inmersión</h2><p className="mx-auto mt-2 max-w-md text-slate-500">Aquí verás tus horas, tu profundidad máxima y tu evolución mes a mes.</p><Link href="/dives/new" className="btn mt-5">Empezar</Link></section> : <>
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{stats.map(([k, v, s, ic]) => <div key={k} className="bg-white card-lift rounded-2xl p-5"><div className="flex items-center justify-between"><span className="text-sm font-medium text-slate-500">{k}</span><span className="tint grid h-9 w-9 place-items-center rounded-full"><Icon name={ic} className="h-4 w-4" /></span></div>
+      <div className="mt-3 text-4xl font-extrabold tracking-tight text-navy">{v}</div><div className="mt-1 text-sm text-slate-500">{s}</div></div>)}</section>
+    <section className="bg-white rounded-2xl p-5 md:p-6"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-bold text-navy">Actividad de {year}</h2><p className="text-sm text-slate-500">Inmersiones por mes. Pulsa una barra para ver sus inmersiones.</p></div>
+      <div className="flex flex-wrap gap-1.5">{years.map((a) => <Link key={a} href={`/?year=${a}`} className={`chip ${a === year ? 'chip-on' : ''}`}>{a}</Link>)}</div></div>
+      <div className="flex h-48 items-end gap-2 sm:gap-3">{m.map((x, i) => <Link key={i} href={`/dives?year=${year}&month=${i + 1}`} className="group flex h-full flex-1 flex-col items-center justify-end text-xs" title={`${MONTHS[i]}: ${x.n} inmersiones, ${x.hours.toFixed(1)} h`}>
+        <span className="mb-1 text-slate-500 opacity-0 transition-opacity group-hover:opacity-100">{x.n}</span><div className="bar-v bar-grow w-full" style={{ height: `${(x.n / top) * 100}%`, minHeight: x.n ? 8 : 4, opacity: x.n ? 1 : 0.25, animationDelay: `${i * 45}ms` }} /><span className="mt-2 text-slate-500">{MONTHS[i].slice(0, 3)}</span></Link>)}</div></section>
+    <section className="bg-white rounded-2xl p-5 md:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold text-navy">Últimas inmersiones</h2><Link href="/dives" className="text-sm font-semibold text-teal-dark">Ver todas →</Link></div>
+      <ul className="divide-y">{recent.map((d) => <li key={d.id}><Link href={`/dives/${d.id}?from=%2F`} className="flex items-center gap-4 rounded-xl px-2 py-3 hover:bg-[var(--tint)]"><span className="tint grid h-11 w-11 shrink-0 place-items-center rounded-full text-sm font-bold">{d.dive_number}</span>
+        <span className="min-w-0 flex-1"><span className="block truncate font-semibold text-navy">{d.site}</span><span className="block text-sm text-slate-500">{d.dive_date}</span></span><span className="text-right text-sm text-slate-500"><span className="block font-semibold text-navy">{d.max_depth_m} m</span>{d.duration_min} min</span></Link></li>)}</ul></section></>}
+  </div>
 }
