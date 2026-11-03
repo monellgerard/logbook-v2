@@ -1,10 +1,34 @@
+
 import './globals.css'
-import { Plus_Jakarta_Sans } from 'next/font/google'
 import SeaBackground from '@/components/sea-background'
-const sans = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], display: 'swap' })
-export const metadata = { title: 'LogBook · Libro de inmersiones' }
-// Aplica el tema antes de pintar (evita parpadeos). Por defecto: oscuro (noche).
+
+export const metadata = {
+  title: 'LogBook · Libro de inmersiones',
+}
+
+// Aplica el tema antes de pintar.
 const themeScript = `try{if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark')}catch(e){document.documentElement.classList.add('dark')}`
+
 export default function Root({ children }: { children: React.ReactNode }) {
-  return <html lang="es" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head><body className={sans.className}><SeaBackground />{children}</body></html>
+  return (
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+        <SeaBackground />
+        {children}
+      </body>
+    </html>
+  )
 }
