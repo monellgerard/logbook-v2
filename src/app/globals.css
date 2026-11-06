@@ -80,66 +80,31 @@ a, button, input, select, textarea { transition-property: color, background-colo
 @keyframes draw { to { stroke-dashoffset: 0; } } @keyframes pop { from { opacity: 0; transform: translateY(-6px) scale(.97); } to { opacity: 1; transform: none; } } @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(14deg); } 20%, 40% { transform: rotate(-8deg); } 50% { transform: rotate(10deg); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; } .bg-photo, .blob, .login-photo, .login-sweep, .bubble2 { animation: none !important; } .bubble2 { display: none; } .draw { stroke-dashoffset: 0; } }
 
-/* LOGBOOK SIDEBAR - ESTADO PLEGADO */
 
-/* Transición del panel */
-.side {
-  box-sizing: border-box;
-  min-width: 0;
-  overflow: hidden;
-  transition: width 300ms ease;
-}
+/* LOGBOOK SIDEBAR - CONTROL DE ANCHURA */
 
-/* Estado plegado en escritorio */
+/* Escritorio: ancho controlado por el estado */
 @media (min-width: 768px) {
-  .side[data-collapsed="true"] .sidebar-label {
-    display: none !important;
+  .side[data-collapsed="true"] {
+    width: 84px !important;
+    min-width: 84px !important;
+    max-width: 84px !important;
+    flex: 0 0 84px !important;
   }
 
-  .side[data-collapsed="true"] .sidebar-header {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .side[data-collapsed="true"] .sidebar-toggle {
-    position: absolute;
-    top: 38px;
-    right: -1px;
-    margin: 0;
-    transform: translateX(50%);
-  }
-
-  .side[data-collapsed="true"] .sidebar-new .btn {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .side[data-collapsed="true"] .nav-btn {
-    justify-content: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
-  .side[data-collapsed="true"] .sidebar-user {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+  .side[data-collapsed="false"] {
+    width: 288px !important;
+    min-width: 288px !important;
+    max-width: 288px !important;
+    flex: 0 0 288px !important;
   }
 }
 
-/* En móvil el menú siempre conserva su ancho y sus textos */
+/* Móvil: ancho fijo */
 @media (max-width: 767px) {
   .side {
     width: 288px !important;
-  }
-
-  .side .sidebar-label {
-    display: initial !important;
-  }
-
-  .side .sidebar-user {
-    justify-content: flex-start;
+    min-width: 288px !important;
+    max-width: 288px !important;
   }
 }
