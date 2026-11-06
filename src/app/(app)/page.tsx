@@ -128,14 +128,6 @@ export default async function Dashboard(props: {
             Tu actividad y evolución como buceador.
           </p>
         </div>
-
-        <Link
-          href="/dives/new"
-          className="btn hidden items-center gap-2 sm:inline-flex"
-        >
-          <Icon name="plus" className="h-5 w-5" />
-          Nueva inmersión
-        </Link>
       </header>
 
       {/* AVISO DE CERTIFICACIONES */}
