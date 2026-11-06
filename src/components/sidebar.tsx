@@ -8,7 +8,6 @@ import Logo from './logo'
 import Icon from './icon'
 import ThemeToggle from './theme-toggle'
 import { signOut } from '@/app/actions'
-import type { CSSProperties } from 'react'
 
 export type NavItem = {
   href: string
@@ -76,14 +75,8 @@ export default function Sidebar({
     .join('')
     .toUpperCase()
 
-  const sidebarStyle = {
-    '--sidebar-width': collapsed ? '84px' : '288px',
-    flexShrink: 0,
-  } as CSSProperties
-
   return (
     <>
-      {/* Cabecera móvil */}
       <header className="side-mobile fixed inset-x-3 top-3 z-30 flex h-14 items-center gap-3 px-4 md:hidden">
         <button
           type="button"
@@ -95,10 +88,7 @@ export default function Sidebar({
         </button>
 
         <Logo size={34} />
-
-        <span className="text-lg font-bold tracking-tight">
-          LogBook
-        </span>
+        <span className="text-lg font-bold tracking-tight">LogBook</span>
 
         <Link
           href="/dives/new"
@@ -109,7 +99,6 @@ export default function Sidebar({
         </Link>
       </header>
 
-      {/* Fondo del menú móvil */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm md:hidden"
@@ -117,15 +106,16 @@ export default function Sidebar({
         />
       )}
 
-      {/* Panel lateral */}
       <aside
         data-collapsed={collapsed}
-        style={sidebarStyle}
-        className={`side fixed left-0 top-0 z-50 flex h-screen w-72 flex-col transition-[width,transform] duration-300 md:sticky md:top-3 md:m-3 md:h-[calc(100vh-1.5rem)] md:w-[var(--sidebar-width)] ${
+        style={{
+          width: collapsed ? '84px' : '288px',
+          flexShrink: 0,
+        }}
+        className={`side fixed left-0 top-0 z-50 flex h-screen flex-col transition-[width,transform] duration-300 md:sticky md:top-3 md:m-3 md:h-[calc(100vh-1.5rem)] ${
           open ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        {/* Logo y botón de plegado */}
         <div className="flex items-center gap-3 px-4 pb-2 pt-5">
           <Logo size={46} />
 
@@ -137,9 +127,9 @@ export default function Sidebar({
             type="button"
             onClick={toggle}
             aria-label={collapsed ? 'Expandir menú' : 'Contraer menú'}
-            aria-expanded={!collapsed}
             title={collapsed ? 'Expandir menú' : 'Contraer menú'}
-            className="nav-mini ml-auto hidden h-9 w-9 shrink-0 place-items-center md:grid"
+            aria-expanded={!collapsed}
+            className="nav-mini ml-auto hidden shrink-0 place-items-center md:grid"
           >
             <Icon
               name={collapsed ? 'right' : 'left'}
@@ -148,7 +138,6 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Nueva inmersión */}
         <div className="px-3 pb-3 pt-2">
           <Link
             href="/dives/new"
@@ -156,14 +145,10 @@ export default function Sidebar({
             className={`btn w-full ${collapsed ? 'md:!px-0' : ''}`}
           >
             <Icon name="plus" className="h-5 w-5 shrink-0" />
-
-            <span className={hide}>
-              Nueva inmersión
-            </span>
+            <span className={hide}>Nueva inmersión</span>
           </Link>
         </div>
 
-        {/* Navegación */}
         <nav className="flex-1 overflow-y-auto px-3 pb-2">
           {groups.map((g) => (
             <div key={g} className="mb-3">
@@ -183,21 +168,14 @@ export default function Sidebar({
                     data-active={i.href === best}
                     className="nav-btn"
                   >
-                    <Icon
-                      name={i.icon}
-                      className="h-5 w-5 shrink-0"
-                    />
-
-                    <span className={`truncate ${hide}`}>
-                      {i.label}
-                    </span>
+                    <Icon name={i.icon} className="h-5 w-5 shrink-0" />
+                    <span className={`truncate ${hide}`}>{i.label}</span>
                   </Link>
                 ))}
             </div>
           ))}
         </nav>
 
-        {/* Usuario y opciones */}
         <div className="space-y-1 border-t p-3">
           <div className="mb-2 flex items-center gap-3 px-2">
             {avatar ? (
@@ -213,13 +191,8 @@ export default function Sidebar({
             )}
 
             <div className={`min-w-0 ${hide}`}>
-              <div className="truncate text-sm font-semibold">
-                {name}
-              </div>
-
-              <div className="text-xs text-slate-500">
-                {role}
-              </div>
+              <div className="truncate text-sm font-semibold">{name}</div>
+              <div className="text-xs text-slate-500">{role}</div>
             </div>
           </div>
 
@@ -236,10 +209,7 @@ export default function Sidebar({
               title="Cerrar sesión"
             >
               <Icon name="out" className="h-5 w-5 shrink-0" />
-
-              <span className={hide}>
-                Cerrar sesión
-              </span>
+              <span className={hide}>Cerrar sesión</span>
             </button>
           </form>
         </div>
