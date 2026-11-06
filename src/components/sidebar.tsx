@@ -28,7 +28,6 @@ export default function Sidebar({
   avatar?: string
 }) {
   const path = usePathname()
-
   const [collapsed, setCollapsed] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -45,11 +44,9 @@ export default function Sidebar({
   const toggle = () => {
     setCollapsed((current) => {
       const next = !current
-
       try {
         localStorage.setItem('sidebar', next ? '1' : '0')
       } catch {}
-
       return next
     })
   }
@@ -65,7 +62,6 @@ export default function Sidebar({
           )
           .sort((a, b) => b.href.length - a.href.length)[0]?.href
 
-  const hide = collapsed ? 'md:hidden' : ''
   const groups = [...new Set(items.map((i) => i.group))]
 
   const initials = name
@@ -93,7 +89,6 @@ export default function Sidebar({
         <Link
           href="/dives/new"
           className="btn ml-auto !px-4 !py-2 text-sm"
-          aria-label="Nueva inmersión"
         >
           + Nueva
         </Link>
@@ -116,10 +111,11 @@ export default function Sidebar({
           open ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        <div className="flex items-center gap-3 px-4 pb-2 pt-5">
+        {/* Logo */}
+        <div className="sidebar-header flex items-center gap-3 px-4 pb-2 pt-5">
           <Logo size={46} />
 
-          <span className={`text-xl font-extrabold tracking-tight ${hide}`}>
+          <span className="sidebar-label text-xl font-extrabold tracking-tight">
             LogBook
           </span>
 
@@ -128,8 +124,7 @@ export default function Sidebar({
             onClick={toggle}
             aria-label={collapsed ? 'Expandir menú' : 'Contraer menú'}
             title={collapsed ? 'Expandir menú' : 'Contraer menú'}
-            aria-expanded={!collapsed}
-            className="nav-mini ml-auto hidden shrink-0 place-items-center md:grid"
+            className="nav-mini sidebar-toggle ml-auto hidden shrink-0 place-items-center md:grid"
           >
             <Icon
               name={collapsed ? 'right' : 'left'}
@@ -138,22 +133,24 @@ export default function Sidebar({
           </button>
         </div>
 
-        <div className="px-3 pb-3 pt-2">
+        {/* Nueva inmersión */}
+        <div className="sidebar-new px-3 pb-3 pt-2">
           <Link
             href="/dives/new"
             title="Nueva inmersión"
-            className={`btn w-full ${collapsed ? 'md:!px-0' : ''}`}
+            className="btn w-full"
           >
             <Icon name="plus" className="h-5 w-5 shrink-0" />
-            <span className={hide}>Nueva inmersión</span>
+            <span className="sidebar-label">Nueva inmersión</span>
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-2">
+        {/* Navegación */}
+        <nav className="sidebar-nav flex-1 overflow-y-auto px-3 pb-2">
           {groups.map((g) => (
             <div key={g} className="mb-3">
               {g !== 'Mi libro' && (
-                <p className={`eyebrow mb-1.5 mt-3 px-3 ${hide}`}>
+                <p className="sidebar-label eyebrow mb-1.5 mt-3 px-3">
                   {g}
                 </p>
               )}
@@ -168,16 +165,22 @@ export default function Sidebar({
                     data-active={i.href === best}
                     className="nav-btn"
                   >
-                    <Icon name={i.icon} className="h-5 w-5 shrink-0" />
-                    <span className={`truncate ${hide}`}>{i.label}</span>
+                    <Icon
+                      name={i.icon}
+                      className="h-5 w-5 shrink-0"
+                    />
+                    <span className="sidebar-label truncate">
+                      {i.label}
+                    </span>
                   </Link>
                 ))}
             </div>
           ))}
         </nav>
 
-        <div className="space-y-1 border-t p-3">
-          <div className="mb-2 flex items-center gap-3 px-2">
+        {/* Usuario */}
+        <div className="sidebar-footer space-y-1 border-t p-3">
+          <div className="sidebar-user mb-2 flex items-center gap-3 px-2">
             {avatar ? (
               <img
                 src={avatar}
@@ -190,8 +193,10 @@ export default function Sidebar({
               </span>
             )}
 
-            <div className={`min-w-0 ${hide}`}>
-              <div className="truncate text-sm font-semibold">{name}</div>
+            <div className="sidebar-label min-w-0">
+              <div className="truncate text-sm font-semibold">
+                {name}
+              </div>
               <div className="text-xs text-slate-500">{role}</div>
             </div>
           </div>
@@ -199,7 +204,7 @@ export default function Sidebar({
           <ThemeToggle
             bare
             className="nav-btn w-full"
-            labelClass={hide}
+            labelClass="sidebar-label"
           />
 
           <form action={signOut}>
@@ -209,7 +214,7 @@ export default function Sidebar({
               title="Cerrar sesión"
             >
               <Icon name="out" className="h-5 w-5 shrink-0" />
-              <span className={hide}>Cerrar sesión</span>
+              <span className="sidebar-label">Cerrar sesión</span>
             </button>
           </form>
         </div>
