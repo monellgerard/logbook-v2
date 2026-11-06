@@ -8,6 +8,7 @@ import Logo from './logo'
 import Icon from './icon'
 import ThemeToggle from './theme-toggle'
 import { signOut } from '@/app/actions'
+import type { CSSProperties } from 'react'
 
 export type NavItem = {
   href: string
@@ -28,6 +29,7 @@ export default function Sidebar({
   avatar?: string
 }) {
   const path = usePathname()
+
   const [collapsed, setCollapsed] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -66,6 +68,7 @@ export default function Sidebar({
 
   const hide = collapsed ? 'md:hidden' : ''
   const groups = [...new Set(items.map((i) => i.group))]
+
   const initials = name
     .split(' ')
     .map((w) => w[0])
@@ -73,11 +76,17 @@ export default function Sidebar({
     .join('')
     .toUpperCase()
 
+  const sidebarStyle = {
+    '--sidebar-width': collapsed ? '84px' : '288px',
+    flexShrink: 0,
+  } as CSSProperties
+
   return (
     <>
       {/* Cabecera móvil */}
       <header className="side-mobile fixed inset-x-3 top-3 z-30 flex h-14 items-center gap-3 px-4 md:hidden">
         <button
+          type="button"
           onClick={() => setOpen(true)}
           aria-label="Abrir menú"
           className="nav-mini"
@@ -111,19 +120,16 @@ export default function Sidebar({
       {/* Panel lateral */}
       <aside
         data-collapsed={collapsed}
-        className={`side fixed left-0 top-0 z-50 flex h-screen flex-col transition-[width,transform] duration-300 md:sticky md:top-3 md:m-3 md:h-[calc(100vh-1.5rem)] ${
+        style={sidebarStyle}
+        className={`side fixed left-0 top-0 z-50 flex h-screen w-72 flex-col transition-[width,transform] duration-300 md:sticky md:top-3 md:m-3 md:h-[calc(100vh-1.5rem)] md:w-[var(--sidebar-width)] ${
           open ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 ${
-          collapsed ? 'w-72 md:w-[84px]' : 'w-72 md:w-72'
-        }`}
+        } md:translate-x-0`}
       >
-        {/* Logo y botón único de plegado */}
+        {/* Logo y botón de plegado */}
         <div className="flex items-center gap-3 px-4 pb-2 pt-5">
           <Logo size={46} />
 
-          <span
-            className={`text-xl font-extrabold tracking-tight ${hide}`}
-          >
+          <span className={`text-xl font-extrabold tracking-tight ${hide}`}>
             LogBook
           </span>
 
@@ -133,7 +139,7 @@ export default function Sidebar({
             aria-label={collapsed ? 'Expandir menú' : 'Contraer menú'}
             aria-expanded={!collapsed}
             title={collapsed ? 'Expandir menú' : 'Contraer menú'}
-            className="nav-mini ml-auto hidden h-9 w-9 shrink-0 place-items-center rounded-full md:grid"
+            className="nav-mini ml-auto hidden h-9 w-9 shrink-0 place-items-center md:grid"
           >
             <Icon
               name={collapsed ? 'right' : 'left'}
@@ -217,10 +223,15 @@ export default function Sidebar({
             </div>
           </div>
 
-          <ThemeToggle bare className="nav-btn w-full" labelClass={hide} />
+          <ThemeToggle
+            bare
+            className="nav-btn w-full"
+            labelClass={hide}
+          />
 
           <form action={signOut}>
             <button
+              type="submit"
               className="nav-btn w-full"
               title="Cerrar sesión"
             >
