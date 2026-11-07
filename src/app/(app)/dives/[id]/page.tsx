@@ -7,87 +7,282 @@ import DeleteButton from './delete-button'
 import DiveProfile from '@/components/dive-profile'
 import { reviewDive } from '../../admin/actions'
 
-const ST: Record<string, string> = {
-  pending: 'Pendiente',
-  reviewed: 'Revisada',
-  needs_correction: 'Necesita corrección',
-}
-
-const lab = (k: string, v: any) => {
-  const o = (OPT as any)[k]?.find((x: string[]) => x[0] === v)
-  return o ? o[1] : v
+const translations = {
+  ca: {
+    status: {
+      pending: 'Pendent',
+      reviewed: 'Revisada',
+      needs_correction: 'Necessita correcció',
+      none: 'Sense estat',
+    },
+    labels: {
+      dive_number: 'Nº',
+      site: 'Lloc',
+      dive_date: 'Data',
+      start_time: 'Hora',
+      max_depth_m: 'Profunditat (m)',
+      duration_min: 'Temps (min)',
+      water_temp_c: 'Temp. de l’aigua (°C)',
+      visibility: 'Visibilitat',
+      swell: 'Onatge',
+      current: 'Corrent',
+      suit_type: 'Vestit',
+      weight_kg: 'Llast (kg)',
+      tank_material: 'Material de l’ampolla',
+      tank_capacity_l: 'Capacitat de l’ampolla',
+      gas_mix: 'Barreja',
+      pressure_start_bar: 'Pressió inicial (bar)',
+      pressure_end_bar: 'Pressió final (bar)',
+      team_leader: 'Cap d’equip',
+      buddy: 'Company/a',
+      work_task: 'Feina',
+      incidents: 'Incidències',
+      tools: 'Eines',
+      rating: 'Valoració',
+    },
+    groups: [
+      { title: 'Dades de la immersió', subtitle: 'Informació general i localització' },
+      { title: 'Condicions de l’entorn', subtitle: 'Característiques del medi submarí' },
+      { title: 'Equip i configuració', subtitle: 'Material utilitzat durant la immersió' },
+      { title: 'Equip de busseig', subtitle: 'Pressions i configuració del gas' },
+      { title: 'Equip humà', subtitle: 'Responsables i companys' },
+      { title: 'Activitat i valoració', subtitle: 'Feina realitzada i observacions' },
+    ],
+    diveRecord: 'Registre d’immersió',
+    modified: 'Modificada després de la revisió',
+    noStatus: 'Sense estat',
+    technicalSheet: 'Fitxa tècnica',
+    dive: 'Immersió',
+    locationUnknown: 'Ubicació no especificada',
+    back: 'Tornar a l’historial',
+    edit: 'Editar immersió',
+    maxDepth: 'Profunditat màxima',
+    duration: 'Durada',
+    gasMix: 'Barreja de gas',
+    rating: 'Valoració',
+    reviews: 'Historial de revisions',
+    reviewsDescription: 'Seguiment de les revisions realitzades a aquesta immersió',
+    teacherReview: 'Revisió del professor',
+    teacherDescription: 'Avalua el registre i comunica si necessita modificacions.',
+    reviewComment: 'Comentari de revisió',
+    commentPlaceholder: 'Escriu aquí les teves observacions...',
+    markReviewed: '✓ Marcar com a revisada',
+    needsCorrection: 'Necessita correcció',
+    backToPending: 'Tornar a pendent',
+    profile: 'Perfil de la immersió',
+    profileDescription: 'Representació gràfica de les dades principals',
+    completeData: 'Dades completes',
+    completeDescription: 'Informació tècnica i operativa del registre.',
+    other: 'Altres',
+    error: 'Error',
+    dateLocale: 'ca-ES',
+  },
+  es: {
+    status: {
+      pending: 'Pendiente',
+      reviewed: 'Revisada',
+      needs_correction: 'Necesita corrección',
+      none: 'Sin estado',
+    },
+    labels: {
+      dive_number: 'Nº',
+      site: 'Lugar',
+      dive_date: 'Fecha',
+      start_time: 'Hora',
+      max_depth_m: 'Profundidad (m)',
+      duration_min: 'Tiempo (min)',
+      water_temp_c: 'Temp. agua (°C)',
+      visibility: 'Visibilidad',
+      swell: 'Oleaje',
+      current: 'Corriente',
+      suit_type: 'Traje',
+      weight_kg: 'Lastre (kg)',
+      tank_material: 'Material botella',
+      tank_capacity_l: 'Capacidad botella',
+      gas_mix: 'Mezcla',
+      pressure_start_bar: 'Presión inicial (bar)',
+      pressure_end_bar: 'Presión final (bar)',
+      team_leader: 'Jefe de equipo',
+      buddy: 'Compañero',
+      work_task: 'Trabajo',
+      incidents: 'Incidencias',
+      tools: 'Herramientas',
+      rating: 'Valoración',
+    },
+    groups: [
+      { title: 'Datos de la inmersión', subtitle: 'Información general y localización' },
+      { title: 'Condiciones del entorno', subtitle: 'Características del medio submarino' },
+      { title: 'Equipo y configuración', subtitle: 'Material utilizado durante la inmersión' },
+      { title: 'Equipo de buceo', subtitle: 'Presiones y configuración de gas' },
+      { title: 'Equipo humano', subtitle: 'Responsables y compañeros' },
+      { title: 'Actividad y valoración', subtitle: 'Trabajo realizado y observaciones' },
+    ],
+    diveRecord: 'Registro de inmersión',
+    modified: 'Modificada tras revisión',
+    noStatus: 'Sin estado',
+    technicalSheet: 'Ficha técnica',
+    dive: 'Inmersión',
+    locationUnknown: 'Ubicación no especificada',
+    back: 'Volver al historial',
+    edit: 'Editar inmersión',
+    maxDepth: 'Profundidad máxima',
+    duration: 'Duración',
+    gasMix: 'Mezcla de gas',
+    rating: 'Valoración',
+    reviews: 'Historial de revisiones',
+    reviewsDescription: 'Seguimiento de las revisiones realizadas a esta inmersión',
+    teacherReview: 'Revisión del profesor',
+    teacherDescription: 'Evalúa el registro y comunica si necesita modificaciones.',
+    reviewComment: 'Comentario de revisión',
+    commentPlaceholder: 'Escribe aquí tus observaciones...',
+    markReviewed: '✓ Marcar revisada',
+    needsCorrection: 'Necesita corrección',
+    backToPending: 'Volver a pendiente',
+    profile: 'Perfil de inmersión',
+    profileDescription: 'Representación gráfica de los datos principales',
+    completeData: 'Datos completos',
+    completeDescription: 'Información técnica y operativa del registro.',
+    other: 'Otros',
+    error: 'Error',
+    dateLocale: 'es-ES',
+  },
+  en: {
+    status: {
+      pending: 'Pending',
+      reviewed: 'Reviewed',
+      needs_correction: 'Needs correction',
+      none: 'No status',
+    },
+    labels: {
+      dive_number: 'No.',
+      site: 'Location',
+      dive_date: 'Date',
+      start_time: 'Time',
+      max_depth_m: 'Depth (m)',
+      duration_min: 'Time (min)',
+      water_temp_c: 'Water temp. (°C)',
+      visibility: 'Visibility',
+      swell: 'Swell',
+      current: 'Current',
+      suit_type: 'Suit',
+      weight_kg: 'Weight (kg)',
+      tank_material: 'Tank material',
+      tank_capacity_l: 'Tank capacity',
+      gas_mix: 'Gas mix',
+      pressure_start_bar: 'Starting pressure (bar)',
+      pressure_end_bar: 'Ending pressure (bar)',
+      team_leader: 'Team leader',
+      buddy: 'Buddy',
+      work_task: 'Work',
+      incidents: 'Incidents',
+      tools: 'Tools',
+      rating: 'Rating',
+    },
+    groups: [
+      { title: 'Dive details', subtitle: 'General information and location' },
+      { title: 'Environmental conditions', subtitle: 'Underwater environment characteristics' },
+      { title: 'Equipment and configuration', subtitle: 'Equipment used during the dive' },
+      { title: 'Diving equipment', subtitle: 'Pressure and gas configuration' },
+      { title: 'Dive team', subtitle: 'Leaders and buddies' },
+      { title: 'Activity and rating', subtitle: 'Work performed and observations' },
+    ],
+    diveRecord: 'Dive record',
+    modified: 'Modified after review',
+    noStatus: 'No status',
+    technicalSheet: 'Technical details',
+    dive: 'Dive',
+    locationUnknown: 'Location not specified',
+    back: 'Back to history',
+    edit: 'Edit dive',
+    maxDepth: 'Maximum depth',
+    duration: 'Duration',
+    gasMix: 'Gas mix',
+    rating: 'Rating',
+    reviews: 'Review history',
+    reviewsDescription: 'Track the reviews carried out on this dive',
+    teacherReview: 'Instructor review',
+    teacherDescription: 'Evaluate the record and indicate whether changes are needed.',
+    reviewComment: 'Review comment',
+    commentPlaceholder: 'Write your observations here...',
+    markReviewed: '✓ Mark as reviewed',
+    needsCorrection: 'Needs correction',
+    backToPending: 'Return to pending',
+    profile: 'Dive profile',
+    profileDescription: 'Graphical representation of the main data',
+    completeData: 'Complete details',
+    completeDescription: 'Technical and operational information for this record.',
+    other: 'Other',
+    error: 'Error',
+    dateLocale: 'en-GB',
+  },
 }
 
 const ROWS: [string, string, string?][] = [
-  ['Nº', 'dive_number'],
-  ['Lugar', 'site'],
-  ['Fecha', 'dive_date'],
-  ['Hora', 'start_time'],
-  ['Profundidad (m)', 'max_depth_m'],
-  ['Tiempo (min)', 'duration_min'],
-  ['Temp. agua (°C)', 'water_temp_c'],
-  ['Visibilidad', 'visibility'],
-  ['Oleaje', 'swell'],
-  ['Corriente', 'current'],
-  ['Traje', 'suit_type'],
-  ['Lastre (kg)', 'weight_kg'],
-  ['Material botella', 'tank_material', 'tank_material_other'],
-  ['Capacidad botella', 'tank_capacity_l', 'tank_capacity_other'],
-  ['Mezcla', 'gas_mix', 'gas_mix_other'],
-  ['Presión inicial (bar)', 'pressure_start_bar'],
-  ['Presión final (bar)', 'pressure_end_bar'],
-  ['Jefe de equipo', 'team_leader'],
-  ['Pareja', 'buddy'],
-  ['Trabajo', 'work_task'],
-  ['Incidencias', 'incidents'],
-  ['Herramientas', 'tools'],
-  ['Valoración', 'rating'],
+  ['', 'dive_number'],
+  ['', 'site'],
+  ['', 'dive_date'],
+  ['', 'start_time'],
+  ['', 'max_depth_m'],
+  ['', 'duration_min'],
+  ['', 'water_temp_c'],
+  ['', 'visibility'],
+  ['', 'swell'],
+  ['', 'current'],
+  ['', 'suit_type'],
+  ['', 'weight_kg'],
+  ['', 'tank_material', 'tank_material_other'],
+  ['', 'tank_capacity_l', 'tank_capacity_other'],
+  ['', 'gas_mix', 'gas_mix_other'],
+  ['', 'pressure_start_bar'],
+  ['', 'pressure_end_bar'],
+  ['', 'team_leader'],
+  ['', 'buddy'],
+  ['', 'work_task'],
+  ['', 'incidents'],
+  ['', 'tools'],
+  ['', 'rating'],
 ]
 
-const GROUPS = [
+const GROUP_KEYS = [
   {
-    title: 'Datos de la inmersión',
-    subtitle: 'Información general y localización',
     icon: '◎',
     keys: ['dive_number', 'site', 'dive_date', 'start_time'],
   },
   {
-    title: 'Condiciones del entorno',
-    subtitle: 'Características del medio submarino',
     icon: '≈',
     keys: ['water_temp_c', 'visibility', 'swell', 'current'],
   },
   {
-    title: 'Equipo y configuración',
-    subtitle: 'Material utilizado durante la inmersión',
     icon: '◈',
-    keys: [
-      'suit_type',
-      'weight_kg',
-      'tank_material',
-      'tank_capacity_l',
-      'gas_mix',
-    ],
+    keys: ['suit_type', 'weight_kg', 'tank_material', 'tank_capacity_l', 'gas_mix'],
   },
   {
-    title: 'Equipo de buceo',
-    subtitle: 'Presiones y configuración de gas',
     icon: '◉',
     keys: ['pressure_start_bar', 'pressure_end_bar'],
   },
   {
-    title: 'Equipo humano',
-    subtitle: 'Responsables y compañeros',
     icon: '♧',
     keys: ['team_leader', 'buddy'],
   },
   {
-    title: 'Actividad y valoración',
-    subtitle: 'Trabajo realizado y observaciones',
     icon: '≡',
     keys: ['work_task', 'incidents', 'tools', 'rating'],
   },
 ]
+
+function formatDate(value: string, locale: string) {
+  if (!value) return '—'
+
+  const date = new Date(value)
+
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleDateString(locale, {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      })
+}
 
 export default async function Detail(props: {
   params: Promise<{ id: string }>
@@ -97,6 +292,23 @@ export default async function Detail(props: {
   const searchParams = await props.searchParams
 
   const sb = createClient()
+
+  const {
+    data: { user },
+  } = await sb.auth.getUser()
+
+  if (!user) notFound()
+
+  const { data: me } = await sb
+    .from('profiles')
+    .select('role, language')
+    .eq('id', user.id)
+    .single()
+
+  const language =
+    me?.language === 'es' ? 'es' : me?.language === 'en' ? 'en' : 'ca'
+
+  const t = translations[language]
 
   const { data: d } = await sb
     .from('dives')
@@ -112,18 +324,8 @@ export default async function Detail(props: {
     .eq('dive_id', d.id)
     .order('created_at', { ascending: false })
 
-  const {
-    data: { user },
-  } = await sb.auth.getUser()
-
-  const { data: me } = await sb
-    .from('profiles')
-    .select('role')
-    .eq('id', user!.id)
-    .single()
-
   const isAdmin = me?.role === 'admin'
-  const own = d.user_id === user!.id
+  const own = d.user_id === user.id
 
   const from = searchParams.from ?? ''
 
@@ -144,11 +346,16 @@ export default async function Detail(props: {
           .single()
       ).data?.full_name ?? ''
 
+  const lab = (k: string, v: any) => {
+    const o = (OPT as any)[k]?.find((x: string[]) => x[0] === v)
+    return o ? o[1] : v
+  }
+
   const renderRows = (keys: string[]) =>
-    ROWS.filter(([, k]) => keys.includes(k)).map(([label, key, other]) => {
+    ROWS.filter(([, k]) => keys.includes(k)).map(([, key, other]) => {
       const value =
         d[key] === 'otros' && other
-          ? `Otros: ${d[other] ?? ''}`
+          ? `${t.other}: ${d[other] ?? ''}`
           : lab(key, d[key])
 
       return (
@@ -157,7 +364,7 @@ export default async function Detail(props: {
           className="min-w-0 rounded-xl border border-slate-200/60 bg-white/65 p-3 transition hover:bg-white/90 dark:border-white/10 dark:bg-white/[0.035] dark:hover:bg-white/[0.07]"
         >
           <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            {label}
+            {t.labels[key as keyof typeof t.labels]}
           </dt>
           <dd className="mt-1 whitespace-pre-wrap break-words text-sm font-medium text-navy dark:text-slate-100">
             {value ?? '—'}
@@ -166,7 +373,7 @@ export default async function Detail(props: {
       )
     })
 
-  const status = ST[d.review_status] ?? 'Sin estado'
+  const status = t.status[d.review_status as keyof typeof t.status] ?? t.noStatus
 
   return (
     <div className="space-y-6">
@@ -184,7 +391,7 @@ export default async function Detail(props: {
         className="inline-flex items-center gap-2 text-sm font-medium text-teal-800 transition hover:gap-3 dark:text-cyan-300"
       >
         <span>←</span>
-        Volver al historial
+        {t.back}
       </Link>
 
       {/* CABECERA */}
@@ -195,7 +402,7 @@ export default async function Detail(props: {
         <div className="relative">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal-800 dark:bg-teal-400/15 dark:text-teal-300">
-              Registro de inmersión
+              {t.diveRecord}
             </span>
 
             {!(isAdmin && own) && (
@@ -206,7 +413,7 @@ export default async function Detail(props: {
 
             {d.modified_since_review && (
               <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
-                Modificada tras revisión
+                {t.modified}
               </span>
             )}
           </div>
@@ -214,15 +421,15 @@ export default async function Detail(props: {
           <div className="mt-5 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                Ficha técnica
+                {t.technicalSheet}
               </p>
 
               <h1 className="mt-1 text-3xl font-bold tracking-tight text-navy dark:text-white sm:text-4xl">
-                Inmersión #{d.dive_number}
+                {t.dive} #{d.dive_number}
               </h1>
 
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                {d.site || 'Ubicación no especificada'}
+                {d.site || t.locationUnknown}
                 {owner ? ` · ${owner}` : ''}
               </p>
             </div>
@@ -234,7 +441,7 @@ export default async function Detail(props: {
                   className="btn inline-flex items-center justify-center gap-2"
                 >
                   <span>✎</span>
-                  Editar inmersión
+                  {t.edit}
                 </Link>
 
                 <DeleteButton id={d.id} />
@@ -248,7 +455,7 @@ export default async function Detail(props: {
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-2xl border border-white/30 bg-white/70 p-4 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Profundidad máxima
+            {t.maxDepth}
           </p>
           <p className="mt-2 text-2xl font-bold text-navy dark:text-white">
             {d.max_depth_m ?? '—'}
@@ -258,7 +465,7 @@ export default async function Detail(props: {
 
         <div className="rounded-2xl border border-white/30 bg-white/70 p-4 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Duración
+            {t.duration}
           </p>
           <p className="mt-2 text-2xl font-bold text-navy dark:text-white">
             {d.duration_min ?? '—'}
@@ -268,7 +475,7 @@ export default async function Detail(props: {
 
         <div className="rounded-2xl border border-white/30 bg-white/70 p-4 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Mezcla de gas
+            {t.gasMix}
           </p>
           <p className="mt-2 truncate text-xl font-bold text-navy dark:text-white">
             {lab('gas_mix', d.gas_mix) || '—'}
@@ -277,7 +484,7 @@ export default async function Detail(props: {
 
         <div className="rounded-2xl border border-white/30 bg-white/70 p-4 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Valoración
+            {t.rating}
           </p>
           <p className="mt-2 text-2xl font-bold text-navy dark:text-white">
             {d.rating != null ? `${d.rating}/10` : '—'}
@@ -290,10 +497,10 @@ export default async function Detail(props: {
         <section className="overflow-hidden rounded-2xl border border-teal-500/20 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40">
           <div className="border-b border-teal-500/15 bg-teal-500/5 px-5 py-4">
             <h2 className="font-bold text-navy dark:text-white">
-              Historial de revisiones
+              {t.reviews}
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Seguimiento de las revisiones realizadas a esta inmersión
+              {t.reviewsDescription}
             </p>
           </div>
 
@@ -305,11 +512,11 @@ export default async function Detail(props: {
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-semibold text-navy dark:text-white">
-                    {ST[r.status] ?? r.status}
+                    {t.status[r.status as keyof typeof t.status] ?? r.status}
                   </span>
 
                   <span className="text-xs text-slate-500 dark:text-slate-400">
-                    {new Date(r.created_at).toLocaleDateString('es-ES')}
+                    {formatDate(r.created_at, t.dateLocale)}
                   </span>
                 </div>
 
@@ -329,10 +536,10 @@ export default async function Detail(props: {
         <section className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40">
           <div className="border-b border-slate-200/70 px-5 py-4 dark:border-white/10">
             <h2 className="font-bold text-navy dark:text-white">
-              Revisión del profesor
+              {t.teacherReview}
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Evalúa el registro y comunica si necesita modificaciones.
+              {t.teacherDescription}
             </p>
           </div>
 
@@ -344,14 +551,14 @@ export default async function Detail(props: {
               htmlFor="review-comment"
               className="mb-2 block text-xs font-medium text-slate-600 dark:text-slate-300"
             >
-              Comentario de revisión
+              {t.reviewComment}
             </label>
 
             <textarea
               id="review-comment"
               name="comment"
               rows={3}
-              placeholder="Escribe aquí tus observaciones..."
+              placeholder={t.commentPlaceholder}
               className="input mb-4 w-full"
             />
 
@@ -361,7 +568,7 @@ export default async function Detail(props: {
                 value="reviewed"
                 className="btn"
               >
-                ✓ Marcar revisada
+                {t.markReviewed}
               </button>
 
               <button
@@ -369,7 +576,7 @@ export default async function Detail(props: {
                 value="needs_correction"
                 className="rounded-xl border border-amber-400/60 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-50 dark:text-amber-300 dark:hover:bg-amber-400/10"
               >
-                Necesita corrección
+                {t.needsCorrection}
               </button>
 
               <button
@@ -377,7 +584,7 @@ export default async function Detail(props: {
                 value="pending"
                 className="rounded-xl border border-slate-300/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
               >
-                Volver a pendiente
+                {t.backToPending}
               </button>
             </div>
           </form>
@@ -388,10 +595,10 @@ export default async function Detail(props: {
       <section className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40">
         <div className="border-b border-slate-200/70 px-5 py-4 dark:border-white/10">
           <h2 className="font-bold text-navy dark:text-white">
-            Perfil de inmersión
+            {t.profile}
           </h2>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Representación gráfica de los datos principales
+            {t.profileDescription}
           </p>
         </div>
 
@@ -410,16 +617,16 @@ export default async function Detail(props: {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-navy dark:text-white">
-            Datos de la inmersión
+            {t.completeData}
           </h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Información técnica y operativa del registro.
+            {t.completeDescription}
           </p>
         </div>
 
-        {GROUPS.map((group) => (
+        {GROUP_KEYS.map((group, i) => (
           <section
-            key={group.title}
+            key={group.icon}
             className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40"
           >
             <div className="flex items-center gap-3 border-b border-slate-200/60 px-4 py-4 dark:border-white/10 sm:px-5">
@@ -429,10 +636,10 @@ export default async function Detail(props: {
 
               <div>
                 <h3 className="font-semibold text-navy dark:text-white">
-                  {group.title}
+                  {t.groups[i].title}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {group.subtitle}
+                  {t.groups[i].subtitle}
                 </p>
               </div>
             </div>
@@ -450,7 +657,7 @@ export default async function Detail(props: {
           href={back}
           className="inline-flex items-center gap-2 rounded-xl border border-slate-300/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white/70 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
         >
-          ← Volver al historial
+          ← {t.back}
         </Link>
       </div>
     </div>
