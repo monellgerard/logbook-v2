@@ -14,19 +14,11 @@
 
   <rect width="96" height="96" rx="24" fill="url(#bg)"/>
 
-  <path d="M17 29 C27 17 37 17 48 29 S69 41 79 29"
+  <path d="M12 37 C27 15 42 15 57 37 S77 59 84 37"
         fill="none" stroke="url(#wave)"
-        stroke-width="5" stroke-linecap="round"/>
+        stroke-width="9" stroke-linecap="round"/>
 
-  <path d="M17 42 C27 30 37 30 48 42 S69 54 79 42"
+  <path d="M12 66 C27 44 42 44 57 66 S77 88 84 66"
         fill="none" stroke="url(#wave)"
-        stroke-width="5" stroke-linecap="round"/>
-
-  <path d="M17 55 C27 43 37 43 48 55 S69 67 79 55"
-        fill="none" stroke="url(#wave)"
-        stroke-width="5" stroke-linecap="round"/>
-
-  <path d="M17 68 C27 56 37 56 48 68 S69 80 79 68"
-        fill="none" stroke="url(#wave)"
-        stroke-width="5" stroke-linecap="round"/>
+        stroke-width="9" stroke-linecap="round"/>
 </svg>
