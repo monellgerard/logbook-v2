@@ -20,7 +20,7 @@ export default async function Profile(props: {
 
   const { data: p } = await sb
     .from('profiles')
-    .select('full_name, specialty, organization, avatar_path, role')
+    .select('full_name, specialty, organization, avatar_path, role, language')
     .eq('id', uid)
     .single()
 
