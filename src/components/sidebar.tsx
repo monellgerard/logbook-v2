@@ -17,6 +17,36 @@ export type NavItem = {
   group: string
 }
 
+const translations = {
+  ca: {
+    openMenu: 'Obrir menú',
+    expand: 'Expandir menú',
+    collapse: 'Reduir menú',
+    newDive: 'Nova immersió',
+    language: 'Idioma',
+    signOut: 'Tancar sessió',
+    saveError: 'No s’ha pogut desar l’idioma. Torna-ho a provar.',
+  },
+  es: {
+    openMenu: 'Abrir menú',
+    expand: 'Expandir menú',
+    collapse: 'Contraer menú',
+    newDive: 'Nueva inmersión',
+    language: 'Idioma',
+    signOut: 'Cerrar sesión',
+    saveError: 'No se pudo guardar el idioma. Inténtalo de nuevo.',
+  },
+  en: {
+    openMenu: 'Open menu',
+    expand: 'Expand menu',
+    collapse: 'Collapse menu',
+    newDive: 'New dive',
+    language: 'Language',
+    signOut: 'Sign out',
+    saveError: 'Could not save the language. Please try again.',
+  },
+}
+
 export default function Sidebar({
   items,
   name,
@@ -33,6 +63,9 @@ export default function Sidebar({
   const path = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [open, setOpen] = useState(false)
+
+  const t =
+    translations[language as keyof typeof translations] || translations.ca
 
   useEffect(() => {
     try {
@@ -80,7 +113,7 @@ export default function Sidebar({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Abrir menú"
+          aria-label={t.openMenu}
           className="nav-mini"
         >
           <Icon name="menu" className="h-5 w-5" />
@@ -93,7 +126,7 @@ export default function Sidebar({
           href="/dives/new"
           className="btn ml-auto !px-4 !py-2 text-sm"
         >
-          + Nueva
+          + {t.newDive}
         </Link>
       </header>
 
@@ -125,8 +158,8 @@ export default function Sidebar({
           <button
             type="button"
             onClick={toggle}
-            aria-label={collapsed ? 'Expandir menú' : 'Contraer menú'}
-            title={collapsed ? 'Expandir menú' : 'Contraer menú'}
+            aria-label={collapsed ? t.expand : t.collapse}
+            title={collapsed ? t.expand : t.collapse}
             className="nav-mini sidebar-toggle ml-auto hidden shrink-0 place-items-center md:grid"
           >
             <Icon
@@ -140,11 +173,11 @@ export default function Sidebar({
         <div className="sidebar-new px-3 pb-3 pt-2">
           <Link
             href="/dives/new"
-            title="Nueva inmersión"
+            title={t.newDive}
             className="btn w-full"
           >
             <Icon name="plus" className="h-5 w-5 shrink-0" />
-            <span className="sidebar-label">Nueva inmersión</span>
+            <span className="sidebar-label">{t.newDive}</span>
           </Link>
         </div>
 
@@ -152,7 +185,7 @@ export default function Sidebar({
         <nav className="sidebar-nav flex-1 overflow-y-auto px-3 pb-2">
           {groups.map((g) => (
             <div key={g} className="mb-3">
-              {g !== 'Mi libro' && (
+              {g !== items[0]?.group && (
                 <p className="sidebar-label eyebrow mb-1.5 mt-3 px-3">
                   {g}
                 </p>
@@ -214,12 +247,13 @@ export default function Sidebar({
           {/* Selector de idioma */}
           <div className="px-1 py-2">
             <div className="sidebar-label mb-2 px-1 text-xs font-medium text-slate-500">
-              Idioma
+              {t.language}
             </div>
 
             <LanguageSelector
               language={language}
               saveLanguage={saveLanguage}
+              errorMessage={t.saveError}
             />
           </div>
 
@@ -228,10 +262,10 @@ export default function Sidebar({
             <button
               type="submit"
               className="nav-btn w-full"
-              title="Cerrar sesión"
+              title={t.signOut}
             >
               <Icon name="out" className="h-5 w-5 shrink-0" />
-              <span className="sidebar-label">Cerrar sesión</span>
+              <span className="sidebar-label">{t.signOut}</span>
             </button>
           </form>
         </div>
@@ -243,9 +277,11 @@ export default function Sidebar({
 function LanguageSelector({
   language,
   saveLanguage,
+  errorMessage,
 }: {
   language: string
   saveLanguage: (formData: FormData) => Promise<void>
+  errorMessage: string
 }) {
   const [selected, setSelected] = useState(language)
   const [saving, setSaving] = useState(false)
@@ -278,7 +314,7 @@ function LanguageSelector({
       await saveLanguage(formData)
     } catch {
       setSelected(language)
-      alert('No se pudo guardar el idioma. Inténtalo de nuevo.')
+      alert(errorMessage)
     } finally {
       setSaving(false)
     }
