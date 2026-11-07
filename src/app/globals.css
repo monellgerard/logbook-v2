@@ -83,16 +83,17 @@ a, button, input, select, textarea { transition-property: color, background-colo
 
 /* LOGBOOK SIDEBAR - CONTROL DE ANCHURA */
 
-/* Escritorio: ancho controlado por el estado */
+/* LOGBOOK SIDEBAR - CONTROL DE ANCHURA */
+
 @media (min-width: 768px) {
-  .side[data-collapsed="true"] {
+  aside.side[data-collapsed="true"] {
     width: 84px !important;
     min-width: 84px !important;
     max-width: 84px !important;
     flex: 0 0 84px !important;
   }
 
-  .side[data-collapsed="false"] {
+  aside.side[data-collapsed="false"] {
     width: 288px !important;
     min-width: 288px !important;
     max-width: 288px !important;
@@ -100,6 +101,13 @@ a, button, input, select, textarea { transition-property: color, background-colo
   }
 }
 
+@media (max-width: 767px) {
+  aside.side {
+    width: 288px !important;
+    min-width: 288px !important;
+    max-width: 288px !important;
+  }
+}
 /* Móvil: ancho fijo */
 @media (max-width: 767px) {
   .side {
