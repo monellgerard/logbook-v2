@@ -24,6 +24,53 @@ export default async function AppLayout({
 
   if (!me || me.active === false) redirect('/auth/inactive')
 
+  const language = me.language || 'ca'
+
+  const translations = {
+    ca: {
+      home: 'Inici',
+      dives: 'Les meves immersions',
+      profile: 'El meu perfil',
+      class: 'La meva classe',
+      classDives: 'Immersions de la classe',
+      invitations: 'Enllaços de registre',
+      myBook: 'El meu llibre',
+      teacher: 'Professor',
+      roleTeacher: 'Professor',
+      roleStudent: 'Alumne',
+      user: 'Usuari',
+    },
+    es: {
+      home: 'Inicio',
+      dives: 'Mis inmersiones',
+      profile: 'Mi perfil',
+      class: 'Mi clase',
+      classDives: 'Inmersiones de la clase',
+      invitations: 'Enlaces de registro',
+      myBook: 'Mi libro',
+      teacher: 'Profesor',
+      roleTeacher: 'Profesor',
+      roleStudent: 'Alumno',
+      user: 'Usuario',
+    },
+    en: {
+      home: 'Home',
+      dives: 'My dives',
+      profile: 'My profile',
+      class: 'My class',
+      classDives: 'Class dives',
+      invitations: 'Registration links',
+      myBook: 'My logbook',
+      teacher: 'Instructor',
+      roleTeacher: 'Instructor',
+      roleStudent: 'Student',
+      user: 'User',
+    },
+  }
+
+  const t =
+    translations[language as keyof typeof translations] || translations.ca
+
   const avatar = me.avatar_path
     ? (
         await sb.storage
@@ -35,41 +82,41 @@ export default async function AppLayout({
   const items: NavItem[] = [
     {
       href: '/',
-      label: 'Inicio',
+      label: t.home,
       icon: 'home',
-      group: 'Mi libro',
+      group: t.myBook,
     },
     {
       href: '/dives',
-      label: 'Mis inmersiones',
+      label: t.dives,
       icon: 'list',
-      group: 'Mi libro',
+      group: t.myBook,
     },
     {
       href: '/profile',
-      label: 'Mi perfil',
+      label: t.profile,
       icon: 'user',
-      group: 'Mi libro',
+      group: t.myBook,
     },
     ...(me.role === 'admin'
       ? [
           {
             href: '/admin',
-            label: 'Mi clase',
+            label: t.class,
             icon: 'users',
-            group: 'Profesor',
+            group: t.teacher,
           },
           {
             href: '/admin/dives',
-            label: 'Inmersiones de la clase',
+            label: t.classDives,
             icon: 'clip',
-            group: 'Profesor',
+            group: t.teacher,
           },
           {
             href: '/admin/invitations',
-            label: 'Enlaces de registro',
+            label: t.invitations,
             icon: 'link',
-            group: 'Profesor',
+            group: t.teacher,
           },
         ]
       : []),
@@ -77,13 +124,13 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen w-full">
-     <Sidebar
-  items={items}
-  name={me.full_name || user.email || 'Usuario'}
-  role={me.role === 'admin' ? 'Profesor' : 'Alumno'}
-  avatar={avatar}
-  language={me.language || 'ca'}
-/>
+      <Sidebar
+        items={items}
+        name={me.full_name || user.email || t.user}
+        role={me.role === 'admin' ? t.roleTeacher : t.roleStudent}
+        avatar={avatar}
+        language={language}
+      />
 
       <main className="app-main min-w-0 flex-1 px-4 pb-12 pt-24 md:px-8 md:pt-8">
         <div
