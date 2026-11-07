@@ -1,8 +1,25 @@
 
-<path d="M17 37 C29 19 43 19 56 37 S75 55 79 37"
-      fill="none" stroke="url(#wave)"
-      stroke-width="8" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#123D52"/>
+      <stop offset="100%" stop-color="#06151F"/>
+    </linearGradient>
+    <linearGradient id="aqua" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#43BFC5"/>
+      <stop offset="50%" stop-color="#B1F5E5"/>
+      <stop offset="100%" stop-color="#43BFC5"/>
+    </linearGradient>
+  </defs>
 
-<path d="M17 65 C29 47 43 47 56 65 S75 83 79 65"
-      fill="none" stroke="url(#wave)"
-      stroke-width="8" stroke-linecap="round"/>
+  <rect width="96" height="96" rx="23" fill="url(#background)"/>
+
+  <rect x="1.5" y="1.5" width="93" height="93" rx="22"
+        fill="none" stroke="#55C9C9" stroke-opacity=".3" stroke-width="1.5"/>
+
+  <g fill="none" stroke="url(#aqua)" stroke-width="7"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 37 C29 25 39 25 48 37 C57 49 67 49 77 37"/>
+    <path d="M19 61 C29 49 39 49 48 61 C57 73 67 73 77 61"/>
+  </g>
+</svg>
