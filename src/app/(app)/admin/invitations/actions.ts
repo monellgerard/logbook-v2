@@ -3,7 +3,7 @@
 import { createHash, randomBytes } from 'crypto'
 import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin'
-import { encryptInvitationToken } from '@/lib/invitation-crypto'
+import { encryptInvitationToken } from './invitation-crypto'
 
 export async function createInvitation(
   _prev: { link?: string; error?: string },
