@@ -18,7 +18,7 @@ export default async function AppLayout({
 
   const { data: me } = await sb
     .from('profiles')
-    .select('full_name, role, active, avatar_path')
+    .select('full_name, role, active, avatar_path, language')
     .eq('id', user.id)
     .single()
 
@@ -77,12 +77,13 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar
-        items={items}
-        name={me.full_name || user.email || 'Usuario'}
-        role={me.role === 'admin' ? 'Profesor' : 'Alumno'}
-        avatar={avatar}
-      />
+     <Sidebar
+  items={items}
+  name={me.full_name || user.email || 'Usuario'}
+  role={me.role === 'admin' ? 'Profesor' : 'Alumno'}
+  avatar={avatar}
+  language={me.language || 'ca'}
+/>
 
       <main className="app-main min-w-0 flex-1 px-4 pb-12 pt-24 md:px-8 md:pt-8">
         <div
