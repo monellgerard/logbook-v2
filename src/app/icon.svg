@@ -1,31 +1,32 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
   <defs>
-    <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#123c50"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#123d52"/>
       <stop offset="100%" stop-color="#06151f"/>
     </linearGradient>
-    <linearGradient id="aqua" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#9af5e5"/>
-      <stop offset="100%" stop-color="#39b9c5"/>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#43bfc5"/>
+      <stop offset="50%" stop-color="#a0f3df"/>
+      <stop offset="100%" stop-color="#55cbd0"/>
     </linearGradient>
   </defs>
 
-  <circle cx="48" cy="48" r="45" fill="url(#sea)"/>
-  <circle cx="48" cy="48" r="42" fill="none" stroke="#65d9d0" stroke-width="2"/>
+  <rect width="96" height="96" rx="24" fill="url(#bg)"/>
 
-  <path d="M24 43 Q24 25 48 22 Q72 25 72 43 L68 58 Q63 72 48 75 Q33 72 28 58 Z"
-        fill="#0b2534" stroke="url(#aqua)" stroke-width="3"/>
+  <path d="M17 29 C27 17 37 17 48 29 S69 41 79 29"
+        fill="none" stroke="url(#wave)"
+        stroke-width="5" stroke-linecap="round"/>
 
-  <path d="M29 43 Q48 35 67 43 L64 56 Q48 64 32 56 Z"
-        fill="#8ce9df" stroke="#d2fff7" stroke-width="2"/>
+  <path d="M17 42 C27 30 37 30 48 42 S69 54 79 42"
+        fill="none" stroke="url(#wave)"
+        stroke-width="5" stroke-linecap="round"/>
 
-  <path d="M34 47 Q48 43 62 47 L60 55 Q48 59 36 55 Z"
-        fill="#123c50"/>
+  <path d="M17 55 C27 43 37 43 48 55 S69 67 79 55"
+        fill="none" stroke="url(#wave)"
+        stroke-width="5" stroke-linecap="round"/>
 
-  <path d="M39 22 Q48 13 57 22" fill="none"
-        stroke="url(#aqua)" stroke-width="3" stroke-linecap="round"/>
-
-  <path d="M48 75 V82 M39 82 Q48 87 57 82"
-        fill="none" stroke="url(#aqua)" stroke-width="3"
-        stroke-linecap="round"/>
+  <path d="M17 68 C27 56 37 56 48 68 S69 80 79 68"
+        fill="none" stroke="url(#wave)"
+        stroke-width="5" stroke-linecap="round"/>
 </svg>
