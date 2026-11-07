@@ -1,8 +1,128 @@
 
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { fetchAll, summarize, monthly, MONTHS } from '@/lib/filters'
+import { fetchAll, summarize, monthly } from '@/lib/filters'
 import Icon from '@/components/icon'
+
+const translations = {
+  ca: {
+    greeting: 'Hola',
+    diver: 'bussejador',
+    today: 'long',
+    intro: 'Cada immersió explica una història. Consulta la teva activitat, controla els teus registres i segueix la teva evolució com a bussejador.',
+    newDive: 'Nova immersió',
+    tagline: 'El teu diari de busseig',
+    registered: 'immersions registrades',
+    certifications: 'Revisa les teves certificacions',
+    certificationOne: 'certificació caducada o pròxima a caducar.',
+    certificationMany: 'certificacions caducades o pròximes a caducar.',
+    emptyTitle: 'La teva pròxima aventura comença aquí',
+    emptyText: 'Registra la teva primera immersió i comença a construir el teu historial de busseig. Aquí podràs consultar les teves estadístiques i la teva evolució.',
+    firstDive: 'Registrar la primera immersió',
+    history: 'El teu historial',
+    general: 'Resum general',
+    dives: 'Immersions',
+    hours: 'Hores sota l’aigua',
+    maxDepth: 'Profunditat màxima',
+    lastDive: 'Última immersió',
+    during: 'durant',
+    average: 'Mitjana',
+    minutes: 'min',
+    noData: 'Sense dades',
+    since: 'Des de',
+    statistics: 'Estadístiques',
+    activity: 'Activitat de',
+    evolution: 'Evolució de les teves immersions durant l’any.',
+    selectMonth: 'Selecciona un mes per consultar les seves immersions.',
+    recentActivity: 'La teva activitat recent',
+    latestDives: 'Últimes immersions',
+    fiveRecent: 'Els teus cinc registres més recents.',
+    seeAll: 'Veure totes',
+    seeAllDives: 'Consultar totes les immersions',
+    unknownLocation: 'Ubicació no indicada',
+    loadError: 'Error en carregar les dades',
+    months: ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'],
+    locale: 'ca-ES',
+  },
+  es: {
+    greeting: 'Hola',
+    diver: 'buceador',
+    today: 'long',
+    intro: 'Cada inmersión cuenta una historia. Consulta tu actividad, controla tus registros y sigue tu evolución como buceador.',
+    newDive: 'Nueva inmersión',
+    tagline: 'Tu diario de buceo',
+    registered: 'inmersiones registradas',
+    certifications: 'Revisa tus certificaciones',
+    certificationOne: 'certificación caducada o próxima a caducar.',
+    certificationMany: 'certificaciones caducadas o próximas a caducar.',
+    emptyTitle: 'Tu próxima aventura empieza aquí',
+    emptyText: 'Registra tu primera inmersión y empieza a construir tu historial de buceo. Aquí podrás consultar tus estadísticas y tu evolución.',
+    firstDive: 'Registrar primera inmersión',
+    history: 'Tu historial',
+    general: 'Resumen general',
+    dives: 'Inmersiones',
+    hours: 'Horas bajo el agua',
+    maxDepth: 'Profundidad máxima',
+    lastDive: 'Última inmersión',
+    during: 'durante',
+    average: 'Media',
+    minutes: 'min',
+    noData: 'Sin datos',
+    since: 'Desde',
+    statistics: 'Estadísticas',
+    activity: 'Actividad de',
+    evolution: 'Evolución de tus inmersiones durante el año.',
+    selectMonth: 'Selecciona un mes para consultar sus inmersiones.',
+    recentActivity: 'Tu actividad reciente',
+    latestDives: 'Últimas inmersiones',
+    fiveRecent: 'Tus cinco registros más recientes.',
+    seeAll: 'Ver todas',
+    seeAllDives: 'Consultar todas las inmersiones',
+    unknownLocation: 'Ubicación no indicada',
+    loadError: 'Error al cargar los datos',
+    months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    locale: 'es-ES',
+  },
+  en: {
+    greeting: 'Hello',
+    diver: 'diver',
+    today: 'long',
+    intro: 'Every dive tells a story. Review your activity, manage your logs and track your progress as a diver.',
+    newDive: 'New dive',
+    tagline: 'Your diving logbook',
+    registered: 'dives logged',
+    certifications: 'Check your certifications',
+    certificationOne: 'certification has expired or is about to expire.',
+    certificationMany: 'certifications have expired or are about to expire.',
+    emptyTitle: 'Your next adventure starts here',
+    emptyText: 'Log your first dive and start building your diving history. Here you can check your statistics and track your progress.',
+    firstDive: 'Log your first dive',
+    history: 'Your history',
+    general: 'Overall summary',
+    dives: 'Dives',
+    hours: 'Hours underwater',
+    maxDepth: 'Maximum depth',
+    lastDive: 'Last dive',
+    during: 'in',
+    average: 'Average',
+    minutes: 'min',
+    noData: 'No data',
+    since: 'Since',
+    statistics: 'Statistics',
+    activity: 'Activity in',
+    evolution: 'Your diving activity throughout the year.',
+    selectMonth: 'Select a month to view its dives.',
+    recentActivity: 'Your recent activity',
+    latestDives: 'Latest dives',
+    fiveRecent: 'Your five most recent logs.',
+    seeAll: 'View all',
+    seeAllDives: 'View all dives',
+    unknownLocation: 'Location not specified',
+    loadError: 'Error loading data',
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    locale: 'en-GB',
+  },
+}
 
 export default async function Dashboard(props: {
   searchParams: Promise<{ year?: string }>
@@ -10,8 +130,30 @@ export default async function Dashboard(props: {
   const sp = await props.searchParams
   const sb = createClient()
 
-  const { data: { user } } = await sb.auth.getUser()
+  const {
+    data: { user },
+  } = await sb.auth.getUser()
+
   const uid = user!.id
+
+  const [{ data: me }, { data: certs }] = await Promise.all([
+    sb.from('profiles')
+      .select('full_name, language')
+      .eq('id', uid)
+      .single(),
+
+    sb.from('certifications')
+      .select('title, expires_on')
+      .eq('user_id', uid)
+      .not('expires_on', 'is', null)
+      .order('expires_on'),
+  ])
+
+  const language = me?.language || 'ca'
+  const t =
+    translations[language as keyof typeof translations] || translations.ca
+
+  const locale = t.locale
 
   let all: any[]
 
@@ -26,32 +168,19 @@ export default async function Dashboard(props: {
   } catch (e: any) {
     return (
       <p className="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-red-500">
-        Error al cargar datos: {e.message}
+        {t.loadError}: {e.message}
       </p>
     )
   }
-
-  const [{ data: me }, { data: certs }] = await Promise.all([
-    sb.from('profiles')
-      .select('full_name')
-      .eq('id', uid)
-      .single(),
-
-    sb.from('certifications')
-      .select('title, expires_on')
-      .eq('user_id', uid)
-      .not('expires_on', 'is', null)
-      .order('expires_on')
-  ])
 
   const cur = String(new Date().getFullYear())
   const year = sp.year || cur
 
   const years = [
-    ...new Set([cur, ...all.map((d) => d.dive_date.slice(0, 4))])
+    ...new Set([cur, ...all.map((d) => d.dive_date.slice(0, 4))]),
   ].sort().reverse()
 
-  const t = summarize(all)
+  const total = summarize(all)
   const y = summarize(all.filter((d) => d.dive_date.startsWith(year)))
   const m = monthly(all, year)
   const top = Math.max(1, ...m.map((x) => x.n))
@@ -71,42 +200,42 @@ export default async function Dashboard(props: {
     (c) => c.expires_on && c.expires_on <= limit
   )
 
-  const first = me?.full_name?.split(' ')[0] || 'buceador'
+  const first = me?.full_name?.split(' ')[0] || t.diver
 
   const formatDate = (date: string) => {
     if (!date) return '—'
 
     const parsed = new Date(`${date.slice(0, 10)}T12:00:00`)
 
-    return parsed.toLocaleDateString('es-ES', {
+    return parsed.toLocaleDateString(locale, {
       day: 'numeric',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     })
   }
 
-  const today = new Date().toLocaleDateString('es-ES', {
+  const today = new Date().toLocaleDateString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
-    timeZone: 'Europe/Madrid'
+    timeZone: 'Europe/Madrid',
   })
 
   const stats: [string, string | number, string, string][] = [
-    ['Inmersiones', t.n, `${y.n} durante ${year}`, 'list'],
-    ['Horas bajo el agua', t.hours.toFixed(1), `${y.hours.toFixed(1)} h durante ${year}`, 'sun'],
+    [t.dives, total.n, `${y.n} ${t.during} ${year}`, 'list'],
+    [t.hours, total.hours.toFixed(1), `${y.hours.toFixed(1)} h ${t.during} ${year}`, 'sun'],
     [
-      'Profundidad máxima',
-      t.maxDepth !== null ? `${t.maxDepth} m` : '—',
-      t.avg !== null ? `Media: ${t.avg} min` : 'Sin datos',
-      'down'
+      t.maxDepth,
+      total.maxDepth !== null ? `${total.maxDepth} m` : '—',
+      total.avg !== null ? `${t.average}: ${total.avg} ${t.minutes}` : t.noData,
+      'down',
     ],
     [
-      'Última inmersión',
-      t.last ? formatDate(t.last) : '—',
-      t.first ? `Desde ${formatDate(t.first)}` : 'Sin datos',
-      'check'
-    ]
+      t.lastDive,
+      total.last ? formatDate(total.last) : '—',
+      total.first ? `${t.since} ${formatDate(total.first)}` : t.noData,
+      'check',
+    ],
   ]
 
   return (
@@ -128,12 +257,11 @@ export default async function Dashboard(props: {
             </div>
 
             <h1 className="text-3xl font-extrabold tracking-tight text-[var(--title)] sm:text-4xl">
-              Hola, {first} <span>👋</span>
+              {t.greeting}, {first} <span>👋</span>
             </h1>
 
             <p className="mt-3 max-w-lg text-sm leading-6 text-[var(--muted)] sm:text-base">
-              Cada inmersión cuenta una historia. Consulta tu actividad,
-              controla tus registros y sigue tu evolución como buceador.
+              {t.intro}
             </p>
           </div>
 
@@ -142,16 +270,16 @@ export default async function Dashboard(props: {
             className="btn inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold shadow-lg transition hover:-translate-y-0.5"
           >
             <Icon name="plus" className="h-5 w-5" />
-            Nueva inmersión
+            {t.newDive}
           </Link>
         </div>
 
         <div className="relative mt-7 flex flex-wrap gap-2 border-t border-[var(--line)] pt-5">
           <span className="rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--accent)]">
-            LogBook · Tu diario de buceo
+            LogBook · {t.tagline}
           </span>
           <span className="rounded-full border border-[var(--line)] bg-[var(--tint)] px-3 py-1.5 text-xs font-medium text-[var(--muted)]">
-            {t.n} inmersiones registradas
+            {total.n} {t.registered}
           </span>
         </div>
       </section>
@@ -169,10 +297,10 @@ export default async function Dashboard(props: {
 
           <span className="min-w-0 flex-1">
             <span className="block font-bold text-amber-600">
-              Revisa tus certificaciones
+              {t.certifications}
             </span>
             <span className="mt-1 block text-sm text-[var(--muted)]">
-              Tienes {soon.length} {soon.length === 1 ? 'certificación' : 'certificaciones'} caducada o próxima a caducar.
+              {soon.length} {soon.length === 1 ? t.certificationOne : t.certificationMany}
             </span>
           </span>
 
@@ -194,17 +322,16 @@ export default async function Dashboard(props: {
           </div>
 
           <h2 className="relative text-2xl font-extrabold text-[var(--title)]">
-            Tu próxima aventura empieza aquí
+            {t.emptyTitle}
           </h2>
 
           <p className="relative mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--muted)]">
-            Registra tu primera inmersión y empieza a construir tu historial
-            de buceo. Aquí podrás consultar tus estadísticas y tu evolución.
+            {t.emptyText}
           </p>
 
           <Link href="/dives/new" className="btn relative mt-7 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold">
             <Icon name="plus" className="h-5 w-5" />
-            Registrar primera inmersión
+            {t.firstDive}
           </Link>
         </section>
 
@@ -217,16 +344,16 @@ export default async function Dashboard(props: {
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
-                  Tu historial
+                  {t.history}
                 </p>
                 <h2 className="mt-1 text-xl font-extrabold text-[var(--title)]">
-                  Resumen general
+                  {t.general}
                 </h2>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
-              {stats.map(([label, value, subtitle, icon], i) => (
+              {stats.map(([label, value, subtitle, icon]) => (
                 <article
                   key={label}
                   className="group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40"
@@ -264,13 +391,13 @@ export default async function Dashboard(props: {
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
-                  Estadísticas
+                  {t.statistics}
                 </p>
                 <h2 className="mt-1 text-xl font-extrabold text-[var(--title)] sm:text-2xl">
-                  Actividad de {year}
+                  {t.activity} {year}
                 </h2>
                 <p className="mt-2 text-sm text-[var(--muted)]">
-                  Evolución de tus inmersiones durante el año.
+                  {t.evolution}
                 </p>
               </div>
 
@@ -296,7 +423,7 @@ export default async function Dashboard(props: {
             <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4">
                 <p className="text-xs font-semibold text-[var(--muted)]">
-                  Inmersiones
+                  {t.dives}
                 </p>
                 <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
                   {y.n}
@@ -305,7 +432,7 @@ export default async function Dashboard(props: {
 
               <div className="rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4">
                 <p className="text-xs font-semibold text-[var(--muted)]">
-                  Horas bajo el agua
+                  {t.hours}
                 </p>
                 <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
                   {y.hours.toFixed(1)} <span className="text-sm">h</span>
@@ -314,7 +441,7 @@ export default async function Dashboard(props: {
 
               <div className="col-span-2 rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4 sm:col-span-1">
                 <p className="text-xs font-semibold text-[var(--muted)]">
-                  Profundidad máxima
+                  {t.maxDepth}
                 </p>
                 <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
                   {y.maxDepth !== null ? `${y.maxDepth} m` : '—'}
@@ -333,7 +460,7 @@ export default async function Dashboard(props: {
                     <Link
                       key={i}
                       href={`/dives?year=${year}&month=${i + 1}`}
-                      title={`${MONTHS[i]}: ${x.n} inmersiones, ${x.hours.toFixed(1)} h`}
+                      title={`${t.months[i]}: ${x.n} ${t.dives.toLowerCase()}, ${x.hours.toFixed(1)} h`}
                       className="group flex h-full min-w-0 flex-1 flex-col items-center justify-end"
                     >
                       <span className="mb-2 text-xs font-bold text-[var(--accent)] opacity-0 transition group-hover:opacity-100">
@@ -349,13 +476,13 @@ export default async function Dashboard(props: {
                             background: x.n
                               ? 'linear-gradient(180deg, #56c7f0 0%, #2677d8 100%)'
                               : 'var(--line)',
-                            opacity: x.n ? 1 : 0.7
+                            opacity: x.n ? 1 : 0.7,
                           }}
                         />
                       </div>
 
                       <span className="mt-3 text-[10px] font-semibold text-[var(--muted)] sm:text-xs">
-                        {MONTHS[i].slice(0, 3)}
+                        {t.months[i].slice(0, 3)}
                       </span>
                     </Link>
                   )
@@ -364,7 +491,7 @@ export default async function Dashboard(props: {
             </div>
 
             <p className="mt-4 text-center text-xs text-[var(--muted)]">
-              Selecciona un mes para consultar sus inmersiones.
+              {t.selectMonth}
             </p>
           </section>
 
@@ -374,13 +501,13 @@ export default async function Dashboard(props: {
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--line)] p-5 sm:p-6">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
-                  Tu actividad reciente
+                  {t.recentActivity}
                 </p>
                 <h2 className="mt-1 text-xl font-extrabold text-[var(--title)]">
-                  Últimas inmersiones
+                  {t.latestDives}
                 </h2>
                 <p className="mt-1 text-sm text-[var(--muted)]">
-                  Tus cinco registros más recientes.
+                  {t.fiveRecent}
                 </p>
               </div>
 
@@ -388,7 +515,7 @@ export default async function Dashboard(props: {
                 href="/dives"
                 className="rounded-xl border border-[var(--line)] bg-[var(--tint)] px-4 py-2.5 text-sm font-bold text-[var(--accent)] transition hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
               >
-                Ver todas →
+                {t.seeAll} →
               </Link>
             </div>
 
@@ -405,7 +532,7 @@ export default async function Dashboard(props: {
 
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-bold text-[var(--title)] transition group-hover:text-[var(--accent)]">
-                        {d.site || 'Ubicación no indicada'}
+                        {d.site || t.unknownLocation}
                       </span>
                       <span className="mt-1 block text-xs text-[var(--muted)]">
                         {formatDate(d.dive_date)}
@@ -434,7 +561,7 @@ export default async function Dashboard(props: {
                 href="/dives"
                 className="text-sm font-bold text-[var(--accent)]"
               >
-                Consultar todas las inmersiones →
+                {t.seeAllDives} →
               </Link>
             </div>
           </section>
