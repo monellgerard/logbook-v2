@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -210,30 +211,17 @@ export default function Sidebar({
             labelClass="sidebar-label"
           />
 
-          {/* Idioma */}
-          <form action={saveLanguage} className="px-2 py-2">
-            <label
-              htmlFor="sidebar-language"
-              className="sidebar-label mb-1 block text-xs font-medium text-slate-500"
-            >
+          {/* Selector de idioma */}
+          <div className="px-1 py-2">
+            <div className="sidebar-label mb-2 px-1 text-xs font-medium text-slate-500">
               Idioma
-            </label>
+            </div>
 
-            <select
-              id="sidebar-language"
-              name="language"
-              defaultValue={language}
-              aria-label="Seleccionar idioma"
-              onChange={(event) =>
-                event.currentTarget.form?.requestSubmit()
-              }
-              className="sidebar-label w-full rounded-lg border border-slate-300/30 bg-transparent px-2 py-2 text-sm outline-none"
-            >
-              <option value="ca">Català</option>
-              <option value="es">Español</option>
-              <option value="en">English</option>
-            </select>
-          </form>
+            <LanguageSelector
+              language={language}
+              saveLanguage={saveLanguage}
+            />
+          </div>
 
           {/* Cerrar sesión */}
           <form action={signOut}>
@@ -249,5 +237,80 @@ export default function Sidebar({
         </div>
       </aside>
     </>
+  )
+}
+
+function LanguageSelector({
+  language,
+  saveLanguage,
+}: {
+  language: string
+  saveLanguage: (formData: FormData) => Promise<void>
+}) {
+  const [selected, setSelected] = useState(language)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    setSelected(language)
+  }, [language])
+
+  const languages = [
+    { code: 'ca', label: 'CAT' },
+    { code: 'es', label: 'ESP' },
+    { code: 'en', label: 'ENG' },
+  ]
+
+  const index = Math.max(
+    0,
+    languages.findIndex((item) => item.code === selected)
+  )
+
+  async function changeLanguage(code: string) {
+    if (code === selected || saving) return
+
+    setSelected(code)
+    setSaving(true)
+
+    const formData = new FormData()
+    formData.set('language', code)
+
+    try {
+      await saveLanguage(formData)
+    } catch {
+      setSelected(language)
+      alert('No se pudo guardar el idioma. Inténtalo de nuevo.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div
+      className={`relative grid grid-cols-3 rounded-full border border-slate-300/20 bg-slate-500/10 p-1 ${
+        saving ? 'opacity-70' : ''
+      }`}
+    >
+      <div
+        className="absolute bottom-1 left-1 top-1 w-[calc((100%-8px)/3)] rounded-full bg-cyan-400 shadow-md transition-transform duration-300 ease-in-out"
+        style={{ transform: `translateX(${index * 100}%)` }}
+      />
+
+      {languages.map((item) => (
+        <button
+          key={item.code}
+          type="button"
+          disabled={saving}
+          onClick={() => changeLanguage(item.code)}
+          aria-pressed={selected === item.code}
+          className={`relative z-10 rounded-full py-2 text-[10px] font-bold tracking-wide transition-colors duration-200 ${
+            selected === item.code
+              ? 'text-slate-950'
+              : 'text-slate-500 hover:text-current'
+          }`}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
   )
 }
