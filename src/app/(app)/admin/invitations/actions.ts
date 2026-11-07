@@ -102,3 +102,48 @@ export async function deleteInvitation(fd: FormData) {
         : 'ok=' + encodeURIComponent('Invitación eliminada correctamente.'))
   )
 }
+export async function deleteAllInactiveInvitations() {
+  const { sb } = await requireAdmin()
+
+  const { data, error } = await sb
+    .from('invitations')
+    .select('id, active, uses, max_uses, expires_at')
+
+  if (error) {
+    redirect(
+      '/admin/invitations?error=' +
+        encodeURIComponent(error.message)
+    )
+  }
+
+  const now = Date.now()
+
+  const inactiveIds = (data ?? [])
+    .filter((i) =>
+      !i.active ||
+      (i.expires_at && new Date(i.expires_at).getTime() < now) ||
+      i.uses >= i.max_uses
+    )
+    .map((i) => i.id)
+
+  if (inactiveIds.length === 0) {
+    redirect(
+      '/admin/invitations?ok=' +
+        encodeURIComponent('No hay invitaciones antiguas que eliminar.')
+    )
+  }
+
+  const { error: deleteError } = await sb
+    .from('invitations')
+    .delete()
+    .in('id', inactiveIds)
+
+  redirect(
+    '/admin/invitations?' +
+      (deleteError
+        ? 'error=' + encodeURIComponent(deleteError.message)
+        : 'ok=' + encodeURIComponent(
+            `Se han eliminado ${inactiveIds.length} invitaciones del historial.`
+          ))
+  )
+}
