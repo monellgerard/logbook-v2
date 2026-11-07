@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { OPT } from '@/lib/dive-schema'
+import { OPT, OPT_LABELS } from '@/lib/dive-schema'
 import DeleteButton from './delete-button'
 import DiveProfile from '@/components/dive-profile'
 import { reviewDive } from '../../admin/actions'
@@ -346,10 +346,13 @@ export default async function Detail(props: {
           .single()
       ).data?.full_name ?? ''
 
-  const lab = (k: string, v: any) => {
-    const o = (OPT as any)[k]?.find((x: string[]) => x[0] === v)
-    return o ? o[1] : v
-  }
+ const lab = (k: string, v: any) => {
+  const o = (OPT as any)[k]?.find((x: string[]) => x[0] === v)
+
+  if (!o) return v
+
+  return (OPT_LABELS as any)[language]?.[k]?.[v] ?? o[1]
+}
 
   const renderRows = (keys: string[]) =>
     ROWS.filter(([, k]) => keys.includes(k)).map(([, key, other]) => {
