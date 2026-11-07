@@ -183,22 +183,7 @@ export default function Sidebar({
         </div>
 
         {/* Nueva inmersión */}
-        <div
-          className={`sidebar-new pb-3 pt-2 ${
-            collapsed ? 'px-2' : 'px-3'
-          }`}
-        >
-          <Link
-            href="/dives/new"
-            title={t.newDive}
-            className={`btn w-full ${
-              collapsed ? '!px-2' : ''
-            }`}
-          >
-            <Icon name="plus" className="h-5 w-5 shrink-0" />
-            {!collapsed && <span>{t.newDive}</span>}
-          </Link>
-        </div>
+       
 
         {/* Navegación */}
         <nav
