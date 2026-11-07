@@ -1,24 +1,8 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#123d52"/>
-      <stop offset="100%" stop-color="#06151f"/>
-    </linearGradient>
-    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#43bfc5"/>
-      <stop offset="50%" stop-color="#a0f3df"/>
-      <stop offset="100%" stop-color="#55cbd0"/>
-    </linearGradient>
-  </defs>
+<path d="M17 37 C29 19 43 19 56 37 S75 55 79 37"
+      fill="none" stroke="url(#wave)"
+      stroke-width="8" stroke-linecap="round"/>
 
-  <rect width="96" height="96" rx="24" fill="url(#bg)"/>
-
-  <path d="M12 37 C27 15 42 15 57 37 S77 59 84 37"
-        fill="none" stroke="url(#wave)"
-        stroke-width="9" stroke-linecap="round"/>
-
-  <path d="M12 66 C27 44 42 44 57 66 S77 88 84 66"
-        fill="none" stroke="url(#wave)"
-        stroke-width="9" stroke-linecap="round"/>
-</svg>
+<path d="M17 65 C29 47 43 47 56 65 S75 83 79 65"
+      fill="none" stroke="url(#wave)"
+      stroke-width="8" stroke-linecap="round"/>
