@@ -202,3 +202,4 @@ export default async function Invitations(props: {
   )
 }
 import { deleteAllInactiveInvitations } from './actions'
+import DeleteHistoryButton from './delete-history-button'
