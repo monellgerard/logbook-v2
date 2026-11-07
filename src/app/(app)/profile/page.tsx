@@ -266,6 +266,9 @@ export default async function Profile(props: {
               ))}
             </div>
           </section>
+<div className="rounded-xl bg-red-500 p-4 text-white font-bold">
+  PRUEBA DE IDIOMA
+</div>
 {/* PREFERENCIAS DE IDIOMA */}
 <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
   <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
