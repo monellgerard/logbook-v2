@@ -2,7 +2,7 @@ import { requireAdmin } from '@/lib/admin'
 import { Msg } from '../../../auth-shell'
 import NewInvite from './new-invite'
 import InvitationRow from './invitation-row'
-import { decryptInvitationToken } from '@/lib/invitation-crypto'
+import { decryptInvitationToken } from './invitation-crypto'
 
 export default async function Invitations(props: {
   searchParams: Promise<{ ok?: string; error?: string }>
