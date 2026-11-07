@@ -4,7 +4,7 @@
 import { useState, useEffect, useActionState } from 'react'
 import Link from 'next/link'
 import { saveDive } from './actions'
-import { OPT } from '@/lib/dive-schema'
+import { OPT, OPT_LABELS } from '@/lib/dive-schema'
 
 type D = Record<string, any>
 type Language = 'ca' | 'es' | 'en'
@@ -301,9 +301,11 @@ export default function DiveForm({
       className="input"
     >
       <option value="">{t.select}</option>
-      {OPT[k as keyof typeof OPT].map(([a, b]) => (
-        <option key={a} value={a}>{b}</option>
-      ))}
+   {OPT[k as keyof typeof OPT].map(([a, b]) => (
+  <option key={a} value={a}>
+    {OPT_LABELS[language][k as keyof typeof OPT][a] ?? b}
+  </option>
+))}
     </select>
   )
 
