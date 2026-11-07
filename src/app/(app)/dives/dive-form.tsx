@@ -7,6 +7,208 @@ import { saveDive } from './actions'
 import { OPT } from '@/lib/dive-schema'
 
 type D = Record<string, any>
+type Language = 'ca' | 'es' | 'en'
+
+const translations = {
+  ca: {
+    activity: 'Registre d’activitat',
+    title: 'Dades de la immersió',
+    description: 'Completa les dades de la teva immersió. Els camps amb * són obligatoris.',
+    newRecord: 'Registre nou',
+    saveError: 'No s’ha pogut desar la immersió',
+    select: 'Selecciona...',
+    specify: 'Especificar',
+    writeHere: 'Escriu aquí...',
+    sections: [
+      ['Dades generals', 'Informació principal de la immersió'],
+      ['Condicions ambientals', 'Característiques de l’entorn i de l’aigua'],
+      ['Equipament', 'Material i configuració utilitzada'],
+      ['Control de pressions', 'Pressió de l’ampolla a l’inici i al final'],
+      ['Equip i feina', 'Personal, tasques i incidències'],
+      ['Valoració personal', 'Puntua l’experiència d’aquesta immersió'],
+    ],
+    fields: {
+      dive_number: 'Núm. d’immersió (buit = automàtic)',
+      site: 'Lloc *',
+      date: 'Data *',
+      start_time: 'Hora d’inici',
+      max_depth_m: 'Profunditat màxima (m) *',
+      duration_min: 'Temps d’immersió (min) *',
+      water_temp_c: 'Temperatura de l’aigua (°C)',
+      visibility: 'Visibilitat',
+      swell: 'Onatge',
+      current: 'Corrent',
+      suit_type: 'Vestit',
+      weight_kg: 'Llast (kg)',
+      tank_material: 'Material de l’ampolla',
+      tank_capacity_l: 'Capacitat de l’ampolla',
+      gas_mix: 'Barreja / sistema respiratori',
+      pressure_start_bar: 'Pressió inicial (bar)',
+      pressure_end_bar: 'Pressió final (bar)',
+      team_leader: 'Cap d’equip',
+      buddy: 'Company/a d’immersió',
+      work_task: 'Feina que cal fer',
+      incidents: 'Incidències',
+      tools: 'Eines utilitzades',
+    },
+    placeholders: {
+      site: 'Ex. Cala Montjoi',
+      automatic: 'Automàtic',
+      depth: 'Ex. 18.5',
+      duration: 'Ex. 45',
+      temperature: 'Ex. 16.5',
+      weight: 'Ex. 6',
+      pressure: 'Ex. 200',
+      pressureEnd: 'Ex. 50',
+      leader: 'Nom del responsable',
+      buddy: 'Nom del company',
+      work_task: 'Descriu les tasques realitzades...',
+      incidents: 'Registra qualsevol incidència...',
+      tools: 'Material i eines utilitzades...',
+    },
+    pressureWarning: 'La pressió final és superior a la inicial. Revisa les dades. Pots desar-les igualment.',
+    pressureConsumption: 'Consum de pressió',
+    ratingSelect: 'Selecciona una puntuació de l’1 al 10. És opcional.',
+    ratingChosen: 'Valoració seleccionada',
+    ratingRemove: 'Prem de nou per eliminar-la.',
+    unsaved: 'Hi ha canvis sense desar. Vols sortir sense desar?',
+    cancel: 'Cancel·lar',
+    saving: 'Desant la immersió...',
+    save: 'Desar la immersió',
+  },
+  es: {
+    activity: 'Registro de actividad',
+    title: 'Datos de la inmersión',
+    description: 'Completa los datos de tu inmersión. Los campos con * son obligatorios.',
+    newRecord: 'Nuevo registro',
+    saveError: 'No se ha podido guardar la inmersión',
+    select: 'Seleccionar...',
+    specify: 'Especificar',
+    writeHere: 'Escribe aquí...',
+    sections: [
+      ['Datos generales', 'Información principal de la inmersión'],
+      ['Condiciones ambientales', 'Características del entorno y del agua'],
+      ['Equipamiento', 'Material y configuración utilizada'],
+      ['Control de presiones', 'Presión de botella al inicio y al finalizar'],
+      ['Equipo y trabajo', 'Personal, tareas e incidencias'],
+      ['Valoración personal', 'Puntúa la experiencia de esta inmersión'],
+    ],
+    fields: {
+      dive_number: 'N.º de inmersión (vacío = automático)',
+      site: 'Lugar *',
+      date: 'Fecha *',
+      start_time: 'Hora de inicio',
+      max_depth_m: 'Profundidad máxima (m) *',
+      duration_min: 'Tiempo de inmersión (min) *',
+      water_temp_c: 'Temperatura del agua (°C)',
+      visibility: 'Visibilidad',
+      swell: 'Oleaje',
+      current: 'Corriente',
+      suit_type: 'Traje',
+      weight_kg: 'Lastre (kg)',
+      tank_material: 'Material de la botella',
+      tank_capacity_l: 'Capacidad de la botella',
+      gas_mix: 'Mezcla / sistema respiratorio',
+      pressure_start_bar: 'Presión inicial (bar)',
+      pressure_end_bar: 'Presión final (bar)',
+      team_leader: 'Jefe de equipo',
+      buddy: 'Pareja de inmersión',
+      work_task: 'Trabajo a realizar',
+      incidents: 'Incidencias',
+      tools: 'Herramientas utilizadas',
+    },
+    placeholders: {
+      site: 'Ej. Cala Montjoi',
+      automatic: 'Automático',
+      depth: 'Ej. 18.5',
+      duration: 'Ej. 45',
+      temperature: 'Ej. 16.5',
+      weight: 'Ej. 6',
+      pressure: 'Ej. 200',
+      pressureEnd: 'Ej. 50',
+      leader: 'Nombre del responsable',
+      buddy: 'Nombre del compañero',
+      work_task: 'Describe las tareas realizadas...',
+      incidents: 'Registra cualquier incidencia...',
+      tools: 'Material y herramientas empleadas...',
+    },
+    pressureWarning: 'La presión final es mayor que la inicial. Revisa los datos. Puedes guardar igualmente.',
+    pressureConsumption: 'Consumo de presión',
+    ratingSelect: 'Selecciona una puntuación del 1 al 10. Es opcional.',
+    ratingChosen: 'Valoración seleccionada',
+    ratingRemove: 'Pulsa de nuevo para quitarla.',
+    unsaved: 'Hay cambios sin guardar. ¿Salir sin guardar?',
+    cancel: 'Cancelar',
+    saving: 'Guardando inmersión...',
+    save: 'Guardar inmersión',
+  },
+  en: {
+    activity: 'Activity log',
+    title: 'Dive details',
+    description: 'Complete your dive details. Fields marked with * are required.',
+    newRecord: 'New record',
+    saveError: 'The dive could not be saved',
+    select: 'Select...',
+    specify: 'Specify',
+    writeHere: 'Write here...',
+    sections: [
+      ['General information', 'Main dive information'],
+      ['Environmental conditions', 'Water and environmental conditions'],
+      ['Equipment', 'Equipment and configuration used'],
+      ['Pressure control', 'Tank pressure at the beginning and end'],
+      ['Team and work', 'Personnel, tasks and incidents'],
+      ['Personal rating', 'Rate your experience on this dive'],
+    ],
+    fields: {
+      dive_number: 'Dive number (blank = automatic)',
+      site: 'Location *',
+      date: 'Date *',
+      start_time: 'Start time',
+      max_depth_m: 'Maximum depth (m) *',
+      duration_min: 'Dive duration (min) *',
+      water_temp_c: 'Water temperature (°C)',
+      visibility: 'Visibility',
+      swell: 'Waves',
+      current: 'Current',
+      suit_type: 'Exposure suit',
+      weight_kg: 'Weight (kg)',
+      tank_material: 'Tank material',
+      tank_capacity_l: 'Tank capacity',
+      gas_mix: 'Gas mix / breathing system',
+      pressure_start_bar: 'Starting pressure (bar)',
+      pressure_end_bar: 'Ending pressure (bar)',
+      team_leader: 'Team leader',
+      buddy: 'Dive buddy',
+      work_task: 'Work to be carried out',
+      incidents: 'Incidents',
+      tools: 'Tools used',
+    },
+    placeholders: {
+      site: 'E.g. Cala Montjoi',
+      automatic: 'Automatic',
+      depth: 'E.g. 18.5',
+      duration: 'E.g. 45',
+      temperature: 'E.g. 16.5',
+      weight: 'E.g. 6',
+      pressure: 'E.g. 200',
+      pressureEnd: 'E.g. 50',
+      leader: 'Name of the person in charge',
+      buddy: 'Buddy’s name',
+      work_task: 'Describe the tasks carried out...',
+      incidents: 'Record any incidents...',
+      tools: 'Equipment and tools used...',
+    },
+    pressureWarning: 'Ending pressure is higher than starting pressure. Check the data. You can still save it.',
+    pressureConsumption: 'Pressure consumption',
+    ratingSelect: 'Select a rating from 1 to 10. Optional.',
+    ratingChosen: 'Selected rating',
+    ratingRemove: 'Click again to remove it.',
+    unsaved: 'You have unsaved changes. Leave without saving?',
+    cancel: 'Cancel',
+    saving: 'Saving dive...',
+    save: 'Save dive',
+  },
+}
 
 const Sec = ({
   t,
@@ -52,7 +254,15 @@ const F = ({
   </label>
 )
 
-export default function DiveForm({ dive }: { dive?: D }) {
+export default function DiveForm({
+  dive,
+  language = 'ca',
+}: {
+  dive?: D
+  language?: Language
+}) {
+  const t = translations[language] || translations.ca
+
   const [state, action, pending] = useActionState(
     saveDive.bind(null, dive?.id ?? null),
     {} as { error?: string }
@@ -90,7 +300,7 @@ export default function DiveForm({ dive }: { dive?: D }) {
       onChange={(e) => set?.(e.target.value)}
       className="input"
     >
-      <option value="">Seleccionar...</option>
+      <option value="">{t.select}</option>
       {OPT[k as keyof typeof OPT].map(([a, b]) => (
         <option key={a} value={a}>{b}</option>
       ))}
@@ -99,15 +309,29 @@ export default function DiveForm({ dive }: { dive?: D }) {
 
   const otro = (k: string, show: boolean) =>
     show && (
-      <F l="Especificar" wide>
+      <F l={t.specify} wide>
         <input
           name={k}
           defaultValue={v(k)}
-          placeholder="Escribe aquí..."
+          placeholder={t.writeHere}
           className="input"
         />
       </F>
     )
+
+  const placeholders: Record<string, string> = {
+    site: t.placeholders.site,
+    max_depth_m: t.placeholders.depth,
+    duration_min: t.placeholders.duration,
+    water_temp_c: t.placeholders.temperature,
+    weight_kg: t.placeholders.weight,
+    pressure_start_bar: t.placeholders.pressure,
+    pressure_end_bar: t.placeholders.pressureEnd,
+    team_leader: t.placeholders.leader,
+    buddy: t.placeholders.buddy,
+  }
+
+  const section = (index: number) => t.sections[index]
 
   return (
     <form
@@ -120,18 +344,18 @@ export default function DiveForm({ dive }: { dive?: D }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent-strong)]">
-              Registro de actividad
+              {t.activity}
             </p>
             <h2 className="mt-2 text-xl font-bold tracking-tight text-[var(--title)]">
-              Datos de la inmersión
+              {t.title}
             </h2>
             <p className="mt-1 text-sm text-[var(--muted)]">
-              Completa los datos de tu inmersión. Los campos con * son obligatorios.
+              {t.description}
             </p>
           </div>
           <div className="flex items-center gap-2 self-start rounded-full border border-[var(--line)] px-3 py-2 text-xs text-[var(--muted)]">
             <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-            Nuevo registro
+            {t.newRecord}
           </div>
         </div>
       </div>
@@ -141,38 +365,34 @@ export default function DiveForm({ dive }: { dive?: D }) {
           role="alert"
           className="rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300"
         >
-          <p className="font-semibold">No se ha podido guardar la inmersión</p>
+          <p className="font-semibold">{t.saveError}</p>
           <p className="mt-1">{state.error}</p>
         </div>
       )}
 
-      <Sec
-        number="01"
-        t="Datos generales"
-        subtitle="Información principal de la inmersión"
-      >
-        <F l="Nº de inmersión (vacío = automático)">
+      <Sec number="01" t={section(0)[0]} subtitle={section(0)[1]}>
+        <F l={t.fields.dive_number}>
           <input
             name="dive_number"
             type="number"
             min={1}
-            placeholder="Automático"
+            placeholder={t.placeholders.automatic}
             defaultValue={v('dive_number')}
             className="input"
           />
         </F>
 
-        <F l="Lugar *">
+        <F l={t.fields.site}>
           <input
             name="site"
             required
-            placeholder="Ej. Cala Montjoi"
+            placeholder={placeholders.site}
             defaultValue={v('site')}
             className="input"
           />
         </F>
 
-        <F l="Fecha *">
+        <F l={t.fields.date}>
           <input
             name="dive_date"
             type="date"
@@ -182,7 +402,7 @@ export default function DiveForm({ dive }: { dive?: D }) {
           />
         </F>
 
-        <F l="Hora de inicio">
+        <F l={t.fields.start_time}>
           <input
             name="start_time"
             type="time"
@@ -191,111 +411,99 @@ export default function DiveForm({ dive }: { dive?: D }) {
           />
         </F>
 
-        <F l="Profundidad máxima (m) *">
+        <F l={t.fields.max_depth_m}>
           <input
             name="max_depth_m"
             type="number"
             step="0.1"
             min={0}
             required
-            placeholder="Ej. 18.5"
+            placeholder={placeholders.max_depth_m}
             defaultValue={v('max_depth_m')}
             className="input"
           />
         </F>
 
-        <F l="Tiempo de inmersión (min) *">
+        <F l={t.fields.duration_min}>
           <input
             name="duration_min"
             type="number"
             min={1}
             required
-            placeholder="Ej. 45"
+            placeholder={placeholders.duration_min}
             defaultValue={v('duration_min')}
             className="input"
           />
         </F>
       </Sec>
 
-      <Sec
-        number="02"
-        t="Condiciones ambientales"
-        subtitle="Características del entorno y del agua"
-      >
-        <F l="Temperatura del agua (°C)">
+      <Sec number="02" t={section(1)[0]} subtitle={section(1)[1]}>
+        <F l={t.fields.water_temp_c}>
           <input
             name="water_temp_c"
             type="number"
             step="0.1"
-            placeholder="Ej. 16.5"
+            placeholder={placeholders.water_temp_c}
             defaultValue={v('water_temp_c')}
             className="input"
           />
         </F>
 
-        <F l="Visibilidad">{sel('visibility', v('visibility'))}</F>
-        <F l="Oleaje">{sel('swell', v('swell'))}</F>
-        <F l="Corriente">{sel('current', v('current'))}</F>
+        <F l={t.fields.visibility}>{sel('visibility', v('visibility'))}</F>
+        <F l={t.fields.swell}>{sel('swell', v('swell'))}</F>
+        <F l={t.fields.current}>{sel('current', v('current'))}</F>
       </Sec>
 
-      <Sec
-        number="03"
-        t="Equipamiento"
-        subtitle="Material y configuración utilizada"
-      >
-        <F l="Traje">{sel('suit_type', v('suit_type'))}</F>
+      <Sec number="03" t={section(2)[0]} subtitle={section(2)[1]}>
+        <F l={t.fields.suit_type}>{sel('suit_type', v('suit_type'))}</F>
 
-        <F l="Lastre (kg)">
+        <F l={t.fields.weight_kg}>
           <input
             name="weight_kg"
             type="number"
             step="0.5"
             min={0}
-            placeholder="Ej. 6"
+            placeholder={placeholders.weight_kg}
             defaultValue={v('weight_kg')}
             className="input"
           />
         </F>
 
-        <F l="Material de la botella">
+        <F l={t.fields.tank_material}>
           {sel('tank_material', tm, setTm)}
         </F>
         {otro('tank_material_other', tm === 'otros')}
 
-        <F l="Capacidad de la botella">
+        <F l={t.fields.tank_capacity_l}>
           {sel('tank_capacity_l', tc, setTc)}
         </F>
         {otro('tank_capacity_other', tc === 'otros')}
 
-        <F l="Mezcla / sistema respiratorio">
+        <F l={t.fields.gas_mix}>
           {sel('gas_mix', gm, setGm)}
         </F>
         {otro('gas_mix_other', gm === 'otros')}
       </Sec>
 
-      <Sec
-        number="04"
-        t="Control de presiones"
-        subtitle="Presión de botella al inicio y al finalizar"
-      >
-        <F l="Presión inicial (bar)">
+      <Sec number="04" t={section(3)[0]} subtitle={section(3)[1]}>
+        <F l={t.fields.pressure_start_bar}>
           <input
             name="pressure_start_bar"
             type="number"
             min={0}
-            placeholder="Ej. 200"
+            placeholder={placeholders.pressure_start_bar}
             value={p1}
             onChange={(e) => setP1(e.target.value)}
             className="input"
           />
         </F>
 
-        <F l="Presión final (bar)">
+        <F l={t.fields.pressure_end_bar}>
           <input
             name="pressure_end_bar"
             type="number"
             min={0}
-            placeholder="Ej. 50"
+            placeholder={placeholders.pressure_end_bar}
             value={p2}
             onChange={(e) => setP2(e.target.value)}
             className="input"
@@ -304,13 +512,13 @@ export default function DiveForm({ dive }: { dive?: D }) {
 
         {p1 !== '' && p2 !== '' && Number(p2) > Number(p1) && (
           <p className="fit-wide rounded-xl border border-amber-400/30 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-200 sm:col-span-2">
-            ⚠ La presión final es mayor que la inicial. Revisa los datos. Puedes guardar igualmente.
+            ⚠ {t.pressureWarning}
           </p>
         )}
 
         {p1 !== '' && p2 !== '' && Number(p1) >= Number(p2) && (
           <div className="fit-wide rounded-xl border border-[var(--line)] bg-[var(--tint)] p-3 sm:col-span-2">
-            <p className="text-xs text-[var(--muted)]">Consumo de presión</p>
+            <p className="text-xs text-[var(--muted)]">{t.pressureConsumption}</p>
             <p className="mt-1 text-lg font-bold text-[var(--title)]">
               {Number(p1) - Number(p2)} bar
             </p>
@@ -318,35 +526,31 @@ export default function DiveForm({ dive }: { dive?: D }) {
         )}
       </Sec>
 
-      <Sec
-        number="05"
-        t="Equipo y trabajo"
-        subtitle="Personal, tareas e incidencias"
-      >
-        <F l="Jefe de equipo">
+      <Sec number="05" t={section(4)[0]} subtitle={section(4)[1]}>
+        <F l={t.fields.team_leader}>
           <input
             name="team_leader"
-            placeholder="Nombre del responsable"
+            placeholder={placeholders.team_leader}
             defaultValue={v('team_leader')}
             className="input"
           />
         </F>
 
-        <F l="Pareja de inmersión">
+        <F l={t.fields.buddy}>
           <input
             name="buddy"
-            placeholder="Nombre del compañero"
+            placeholder={placeholders.buddy}
             defaultValue={v('buddy')}
             className="input"
           />
         </F>
 
-        {[
-          ['work_task', 'Trabajo a realizar', 'Describe las tareas realizadas...'],
-          ['incidents', 'Incidencias', 'Registra cualquier incidencia...'],
-          ['tools', 'Herramientas utilizadas', 'Material y herramientas empleadas...'],
-        ].map(([k, l, placeholder]) => (
-          <F key={k} l={l} wide>
+        {([
+          ['work_task', t.fields.work_task, t.placeholders.work_task],
+          ['incidents', t.fields.incidents, t.placeholders.incidents],
+          ['tools', t.fields.tools, t.placeholders.tools],
+        ] as const).map(([k, label, placeholder]) => (
+          <F key={k} l={label} wide>
             <textarea
               name={k}
               rows={3}
@@ -358,11 +562,7 @@ export default function DiveForm({ dive }: { dive?: D }) {
         ))}
       </Sec>
 
-      <Sec
-        number="06"
-        t="Valoración personal"
-        subtitle="Puntúa la experiencia de esta inmersión"
-      >
+      <Sec number="06" t={section(5)[0]} subtitle={section(5)[1]}>
         <div className="fit-wide sm:col-span-2">
           <input type="hidden" name="rating" value={rating ?? ''} />
 
@@ -389,8 +589,8 @@ export default function DiveForm({ dive }: { dive?: D }) {
 
           <p className="mt-3 text-xs text-[var(--muted)]">
             {rating === null
-              ? 'Selecciona una puntuación del 1 al 10. Es opcional.'
-              : `Valoración seleccionada: ${rating}/10. Pulsa de nuevo para quitarla.`}
+              ? t.ratingSelect
+              : `${t.ratingChosen}: ${rating}/10. ${t.ratingRemove}`}
           </p>
         </div>
       </Sec>
@@ -400,13 +600,13 @@ export default function DiveForm({ dive }: { dive?: D }) {
           <Link
             href="/dives"
             onClick={(e) => {
-              if (dirty && !confirm('Hay cambios sin guardar. ¿Salir sin guardar?')) {
+              if (dirty && !confirm(t.unsaved)) {
                 e.preventDefault()
               }
             }}
             className="inline-flex items-center justify-center rounded-xl border border-[var(--line)] px-5 py-3 text-sm font-medium text-[var(--fg)] transition hover:bg-[var(--tint)]"
           >
-            Cancelar
+            {t.cancel}
           </Link>
 
           <button
@@ -414,7 +614,7 @@ export default function DiveForm({ dive }: { dive?: D }) {
             disabled={pending}
             className="btn inline-flex items-center justify-center gap-2 px-6 py-3 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {pending ? 'Guardando inmersión...' : 'Guardar inmersión'}
+            {pending ? t.saving : t.save}
             {!pending && <span aria-hidden="true">→</span>}
           </button>
         </div>
