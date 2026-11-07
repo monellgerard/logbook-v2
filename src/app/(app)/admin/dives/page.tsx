@@ -1,7 +1,7 @@
 
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin'
-import { applyFilters, MONTHS, type P } from '@/lib/filters'
+import { applyFilters, type P } from '@/lib/filters' import FiltersPanel from './filters-panel'
 
 const PAGE = 25
 
@@ -75,6 +75,7 @@ export default async function ClassDives(props: {
     ).toString()
 
   const yr = new Date().getFullYear()
+  const years = Array.from({ length: 12 }, (_, i) => yr - i)
 
   const activeFilters = [
     sp.student,
@@ -133,162 +134,21 @@ export default async function ClassDives(props: {
       </header>
 
       {/* FILTROS */}
-      <section className="overflow-hidden rounded-2xl border border-white/40 bg-white/75 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 px-5 py-4 dark:border-white/10 sm:px-6">
-          <div>
-            <p className="eyebrow">Búsqueda avanzada</p>
-            <h2 className="mt-1 text-lg font-semibold text-navy dark:text-white">
-              Filtrar inmersiones
-            </h2>
-          </div>
-
-          {activeFilters > 0 && (
-            <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-800 dark:bg-cyan-400/10 dark:text-cyan-300">
-              {activeFilters} filtros activos
-            </span>
-          )}
-        </div>
-
-        <form
-          key={JSON.stringify(sp)}
-          className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4 sm:p-6"
-        >
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Alumno
-            </span>
-            <select
-              name="student"
-              defaultValue={sp.student ?? ''}
-              className="input"
-            >
-              <option value="">Todos los alumnos</option>
-              {students?.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.full_name || s.id.slice(0, 8)}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Año
-            </span>
-            <select
-              name="year"
-              defaultValue={sp.year ?? ''}
-              className="input"
-            >
-              <option value="">Todos los años</option>
-              {Array.from({ length: 12 }, (_, i) => yr - i).map((a) => (
-                <option key={a} value={a}>{a}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Mes
-            </span>
-            <select
-              name="month"
-              defaultValue={sp.month ?? ''}
-              className="input"
-            >
-              <option value="">Todos los meses</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={i + 1}>{m}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Estado de revisión
-            </span>
-            <select
-              name="review"
-              defaultValue={sp.review ?? ''}
-              className="input"
-            >
-              <option value="">Todos los estados</option>
-              {Object.entries(ST).map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Desde
-            </span>
-            <input
-              name="from"
-              type="date"
-              defaultValue={sp.from}
-              className="input"
-            />
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Hasta
-            </span>
-            <input
-              name="to"
-              type="date"
-              defaultValue={sp.to}
-              className="input"
-            />
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Lugar de inmersión
-            </span>
-            <input
-              name="site"
-              placeholder="Buscar lugar..."
-              defaultValue={sp.site}
-              className="input"
-            />
-          </label>
-
-          <label className="block text-sm">
-            <span className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-              Tipo de trabajo
-            </span>
-            <input
-              name="work"
-              placeholder="Buscar trabajo..."
-              defaultValue={sp.work}
-              className="input"
-            />
-          </label>
-
-          <div className="flex flex-wrap gap-2 border-t border-slate-200/70 pt-4 dark:border-white/10 sm:col-span-2 lg:col-span-4">
-            <button className="btn">
-              <span className="mr-1">⌕</span> Aplicar filtros
-            </button>
-
-            <Link
-              href="/admin/dives"
-              className="rounded-xl border border-slate-200 bg-white/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
-            >
-              Limpiar filtros
-            </Link>
-
-            <a
-              href={`/export?scope=class&${qs({})}`}
-              className="rounded-xl border border-cyan-200 bg-cyan-50/70 px-4 py-2 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-100 dark:border-cyan-400/20 dark:bg-cyan-400/5 dark:text-cyan-300"
-            >
-              ↓ Exportar CSV
-            </a>
-          </div>
-        </form>
-      </section>
-
+      {/* FILTROS */}
+<FiltersPanel
+  student={sp.student}
+  year={sp.year}
+  month={sp.month}
+  review={sp.review}
+  from={sp.from}
+  to={sp.to}
+  site={sp.site}
+  work={sp.work}
+  students={students ?? []}
+  years={years}
+  activeFilters={activeFilters}
+  exportUrl={`/export?scope=class&${qs({})}`}
+/>
       {/* RESULTADOS */}
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
