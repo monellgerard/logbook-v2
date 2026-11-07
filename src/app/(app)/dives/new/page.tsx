@@ -32,7 +32,7 @@ export default async function New() {
       <h1 className="mb-4 text-2xl font-bold text-navy">
         {translations[language]}
       </h1>
-      <DiveForm />
+      <DiveForm language={language} />
     </>
   )
 }
