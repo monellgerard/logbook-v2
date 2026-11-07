@@ -1,4 +1,3 @@
-
 'use client'
 
 import Link from 'next/link'
@@ -8,6 +7,7 @@ import Logo from './logo'
 import Icon from './icon'
 import ThemeToggle from './theme-toggle'
 import { signOut } from '@/app/actions'
+import { saveLanguage } from '@/app/(app)/language-actions'
 
 export type NavItem = {
   href: string
@@ -21,11 +21,13 @@ export default function Sidebar({
   name,
   role,
   avatar,
+  language,
 }: {
   items: NavItem[]
   name: string
   role: string
   avatar?: string
+  language: string
 }) {
   const path = usePathname()
   const [collapsed, setCollapsed] = useState(false)
@@ -201,12 +203,39 @@ export default function Sidebar({
             </div>
           </div>
 
+          {/* Tema */}
           <ThemeToggle
             bare
             className="nav-btn w-full"
             labelClass="sidebar-label"
           />
 
+          {/* Idioma */}
+          <form action={saveLanguage} className="px-2 py-2">
+            <label
+              htmlFor="sidebar-language"
+              className="sidebar-label mb-1 block text-xs font-medium text-slate-500"
+            >
+              Idioma
+            </label>
+
+            <select
+              id="sidebar-language"
+              name="language"
+              defaultValue={language}
+              aria-label="Seleccionar idioma"
+              onChange={(event) =>
+                event.currentTarget.form?.requestSubmit()
+              }
+              className="sidebar-label w-full rounded-lg border border-slate-300/30 bg-transparent px-2 py-2 text-sm outline-none"
+            >
+              <option value="ca">Català</option>
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </form>
+
+          {/* Cerrar sesión */}
           <form action={signOut}>
             <button
               type="submit"
