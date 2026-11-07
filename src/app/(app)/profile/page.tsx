@@ -266,7 +266,59 @@ export default async function Profile(props: {
               ))}
             </div>
           </section>
+{/* PREFERENCIAS DE IDIOMA */}
+<section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
+  <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
+    <div className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-lg text-[var(--accent-strong)]">
+        <Icon name="languages" className="h-5 w-5" />
+      </div>
 
+      <div>
+        <h2 className="font-semibold text-[var(--title)]">
+          Idioma de la aplicación
+        </h2>
+        <p className="mt-1 text-xs text-[var(--muted)]">
+          Selecciona el idioma en el que quieres utilizar LogBook.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <form action={saveProfile} className="p-5 sm:p-6">
+    <input type="hidden" name="full_name" value={p?.full_name ?? ''} />
+    <input type="hidden" name="specialty" value={p?.specialty ?? ''} />
+    <input type="hidden" name="organization" value={p?.organization ?? ''} />
+
+    <div className="grid gap-3 sm:grid-cols-3">
+      {[
+        { value: 'ca', label: 'Català', flag: '🇦🇩' },
+        { value: 'es', label: 'Español', flag: '🇪🇸' },
+        { value: 'en', label: 'English', flag: '🇬🇧' },
+      ].map((lang) => (
+        <label key={lang.value} className="cursor-pointer">
+          <input
+            type="radio"
+            name="language"
+            value={lang.value}
+            defaultChecked={(p?.language ?? 'ca') === lang.value}
+            className="peer sr-only"
+          />
+
+          <span className="flex items-center justify-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--tint)]/40 p-4 text-sm font-semibold text-[var(--fg)] transition hover:border-[var(--accent)] peer-checked:border-[var(--accent)] peer-checked:bg-[var(--accent)]/10 peer-checked:text-[var(--accent-strong)]">
+            <span className="text-xl">{lang.flag}</span>
+            {lang.label}
+          </span>
+        </label>
+      ))}
+    </div>
+
+    <button className="btn mt-4 inline-flex items-center gap-2">
+      Guardar idioma
+      <span aria-hidden="true">→</span>
+    </button>
+  </form>
+</section>
           {/* DATOS PERSONALES */}
           <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
             <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
