@@ -10,11 +10,25 @@ const COLS: [string, string][] = [
   ['dive_number', 'Nº'],
   ['dive_date', 'Fecha'],
   ['site', 'Lugar'],
-  ['max_depth_m', 'Prof. (m)'],
-  ['duration_min', 'Min'],
+  ['max_depth_m', 'Profundidad'],
+  ['duration_min', 'Duración'],
   ['work_task', 'Trabajo'],
   ['rating', 'Valoración'],
 ]
+
+function formatDate(value: string) {
+  if (!value) return '—'
+
+  const date = new Date(`${value}T00:00:00`)
+
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      })
+}
 
 export default async function Dives(props: {
   searchParams: Promise<P & { page?: string; sort?: string; dir?: string }>
@@ -22,7 +36,9 @@ export default async function Dives(props: {
   const sp = await props.searchParams
   const sb = createClient()
 
-  const { data: { user } } = await sb.auth.getUser()
+  const {
+    data: { user },
+  } = await sb.auth.getUser()
 
   const page = Math.max(1, Number(sp.page) || 1)
   const sort = COLS.some(([k]) => k === sp.sort) ? sp.sort! : 'dive_date'
@@ -42,7 +58,13 @@ export default async function Dives(props: {
     .order('dive_number', { ascending: false })
     .range((page - 1) * PAGE, page * PAGE - 1)
 
-  if (error) return <p className="text-red-700">Error: {error.message}</p>
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+        No se han podido cargar las inmersiones: {error.message}
+      </div>
+    )
+  }
 
   const mins = (
     await fetchAll(() =>
@@ -51,7 +73,7 @@ export default async function Dives(props: {
         sp
       ).order('id')
     )
-  ).reduce((s, r) => s + r.duration_min, 0)
+  ).reduce((s, r) => s + Number(r.duration_min || 0), 0)
 
   const { data: first } = await sb
     .from('dives')
@@ -64,7 +86,7 @@ export default async function Dives(props: {
   const y0 = first?.[0] ? Number(first[0].dive_date.slice(0, 4)) : cy
 
   const years = Array.from(
-    { length: cy - y0 + 1 },
+    { length: Math.max(1, cy - y0 + 1) },
     (_, i) => cy - i
   )
 
@@ -86,27 +108,113 @@ export default async function Dives(props: {
 
   const filtered = filterEntries.length > 0
   const activeFilterCount = filterEntries.length
+  const total = count ?? 0
 
   return (
-    <>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-navy">
-          Mis inmersiones
-        </h1>
+    <div className="space-y-6">
 
-        <Link href="/dives/new" className="btn">
-          + Nueva
-        </Link>
-      </div>
+      {/* CABECERA */}
+      <section className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/65 p-6 shadow-xl backdrop-blur-xl dark:bg-slate-950/40 sm:p-8">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-1/3 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />
 
-      <details className="mb-4 overflow-hidden rounded-xl bg-white shadow-sm">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+        <div className="relative flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-teal-700 dark:text-cyan-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+              Mi actividad submarina
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-navy dark:text-white sm:text-4xl">
+              Mis inmersiones
+            </h1>
+
+            <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-300">
+              Consulta, organiza y revisa todo tu historial de buceo.
+            </p>
+          </div>
+
+          <Link
+            href="/dives/new"
+            className="btn inline-flex shrink-0 items-center justify-center gap-2 self-start sm:self-auto"
+          >
+            <span className="text-lg leading-none">+</span>
+            Nueva inmersión
+          </Link>
+        </div>
+      </section>
+
+      {/* RESUMEN */}
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+
+        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              {filtered ? 'Inmersiones encontradas' : 'Total de inmersiones'}
+            </p>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-xl text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
+              ◉
+            </span>
+          </div>
+
+          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
+            {total}
+          </p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Registros {filtered ? 'con los filtros actuales' : 'en tu libro'}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Tiempo bajo el agua
+            </p>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 text-xl text-teal-700 dark:bg-teal-400/15 dark:text-teal-300">
+              ◷
+            </span>
+          </div>
+
+          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
+            {(mins / 60).toFixed(1)}
+            <span className="ml-1 text-base font-semibold text-slate-500">h</span>
+          </p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Horas acumuladas {filtered ? 'en esta selección' : 'registradas'}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Estado de búsqueda
+            </p>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-xl text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">
+              ⌕
+            </span>
+          </div>
+
+          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
+            {activeFilterCount}
+          </p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Filtros activos
+          </p>
+        </div>
+      </section>
+
+      {/* FILTROS */}
+      <details
+        open={filtered}
+        className="group overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40"
+      >
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 transition hover:bg-white/40 dark:hover:bg-white/5 [&::-webkit-details-marker]:hidden sm:p-5">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="19"
-                height="19"
+                width="21"
+                height="21"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -120,137 +228,171 @@ export default async function Dives(props: {
               </svg>
             </span>
 
-            <div>
-              <p className="font-semibold text-slate-800">
-                Filtros
+            <div className="min-w-0">
+              <p className="font-semibold text-navy dark:text-white">
+                Filtrar inmersiones
               </p>
-              <p className="text-xs text-slate-500">
-                Filtra tus inmersiones por fecha, lugar, profundidad y más
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Fecha, ubicación, profundidad, gas y valoración
               </p>
             </div>
           </div>
 
           <div className="flex shrink-0 items-center gap-3">
             {filtered && (
-              <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
                 {activeFilterCount} activos
               </span>
             )}
 
-            <span className="text-lg text-slate-500 transition-transform [details[open]_&]:rotate-180">
+            <span className="text-xl text-slate-500 transition-transform group-open:rotate-180">
               ⌄
             </span>
           </div>
         </summary>
 
-        <div className="border-t border-slate-100 p-4">
+        <div className="border-t border-slate-200/70 p-4 dark:border-white/10 sm:p-5">
           <form
+            action="/dives"
+            method="GET"
             key={JSON.stringify(sp)}
             className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4"
           >
-            <select
-              name="year"
-              defaultValue={sp.year ?? ''}
-              className="input"
-            >
-              <option value="">Año (todos)</option>
-              {years.map((a) => (
-                <option key={a}>{a}</option>
-              ))}
-            </select>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Año
+              </span>
+              <select name="year" defaultValue={sp.year ?? ''} className="input w-full">
+                <option value="">Todos los años</option>
+                {years.map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+            </label>
 
-            <select
-              name="month"
-              defaultValue={sp.month ?? ''}
-              className="input"
-            >
-              <option value="">Mes (todos)</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={i + 1}>
-                  {m}
-                </option>
-              ))}
-            </select>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Mes
+              </span>
+              <select name="month" defaultValue={sp.month ?? ''} className="input w-full">
+                <option value="">Todos los meses</option>
+                {MONTHS.map((m, i) => (
+                  <option key={m} value={i + 1}>{m}</option>
+                ))}
+              </select>
+            </label>
 
-            <input
-              name="from"
-              type="date"
-              defaultValue={sp.from}
-              className="input"
-              title="Desde"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Desde
+              </span>
+              <input
+                name="from"
+                type="date"
+                defaultValue={sp.from}
+                className="input w-full"
+              />
+            </label>
 
-            <input
-              name="to"
-              type="date"
-              defaultValue={sp.to}
-              className="input"
-              title="Hasta"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Hasta
+              </span>
+              <input
+                name="to"
+                type="date"
+                defaultValue={sp.to}
+                className="input w-full"
+              />
+            </label>
 
-            <input
-              name="site"
-              placeholder="Lugar"
-              defaultValue={sp.site}
-              className="input"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Lugar
+              </span>
+              <input
+                name="site"
+                placeholder="Buscar ubicación..."
+                defaultValue={sp.site}
+                className="input w-full"
+              />
+            </label>
 
-            <input
-              name="work"
-              placeholder="Tipo de trabajo"
-              defaultValue={sp.work}
-              className="input"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Tipo de trabajo
+              </span>
+              <input
+                name="work"
+                placeholder="Buscar trabajo..."
+                defaultValue={sp.work}
+                className="input w-full"
+              />
+            </label>
 
-            <input
-              name="min_depth"
-              type="number"
-              min={0}
-              placeholder="Prof. mín (m)"
-              defaultValue={sp.min_depth}
-              className="input"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Profundidad mínima (m)
+              </span>
+              <input
+                name="min_depth"
+                type="number"
+                min={0}
+                placeholder="Ej. 10"
+                defaultValue={sp.min_depth}
+                className="input w-full"
+              />
+            </label>
 
-            <input
-              name="max_depth"
-              type="number"
-              min={0}
-              placeholder="Prof. máx (m)"
-              defaultValue={sp.max_depth}
-              className="input"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Profundidad máxima (m)
+              </span>
+              <input
+                name="max_depth"
+                type="number"
+                min={0}
+                placeholder="Ej. 40"
+                defaultValue={sp.max_depth}
+                className="input w-full"
+              />
+            </label>
 
-            <select
-              name="gas_mix"
-              defaultValue={sp.gas_mix ?? ''}
-              className="input"
-            >
-              <option value="">Gas (todos)</option>
-              {OPT.gas_mix.map(([a, b]) => (
-                <option key={a} value={a}>
-                  {b}
-                </option>
-              ))}
-            </select>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Mezcla de gas
+              </span>
+              <select name="gas_mix" defaultValue={sp.gas_mix ?? ''} className="input w-full">
+                <option value="">Todos los gases</option>
+                {OPT.gas_mix.map(([a, b]) => (
+                  <option key={a} value={a}>{b}</option>
+                ))}
+              </select>
+            </label>
 
-            <input
-              name="min_rating"
-              type="number"
-              min={1}
-              max={10}
-              placeholder="Valoración mín"
-              defaultValue={sp.min_rating}
-              className="input"
-            />
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                Valoración mínima
+              </span>
+              <input
+                name="min_rating"
+                type="number"
+                min={1}
+                max={10}
+                placeholder="De 1 a 10"
+                defaultValue={sp.min_rating}
+                className="input w-full"
+              />
+            </label>
 
-            <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-4">
-              <button className="btn">
+            <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
+              <button type="submit" className="btn">
                 Aplicar filtros
               </button>
 
               <Link
                 href="/dives"
-                className="rounded-lg border border-slate-200 px-4 py-2 transition hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-xl border border-slate-300/70 px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
               >
                 Limpiar filtros
               </Link>
@@ -259,95 +401,218 @@ export default async function Dives(props: {
         </div>
       </details>
 
-      <p className="mb-3 text-sm text-slate-600">
-        {filtered ? 'Periodo filtrado' : 'Todas'}:{' '}
-        <b>{count ?? 0}</b> inmersiones ·{' '}
-        <b>{(mins / 60).toFixed(1)}</b> h acumuladas ·{' '}
-        <a href={exp} className="text-teal-dark underline">
-          Exportar CSV
-        </a>
-      </p>
+      {/* TABLA E HISTORIAL */}
+      <section className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40">
 
-      {!data?.length ? (
-        <p className="text-slate-500">
-          {filtered
-            ? 'Ninguna inmersión coincide con los filtros.'
-            : 'Todavía no has registrado ninguna inmersión.'}
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-100">
-              <tr>
-                {COLS.map(([k, l]) => (
-                  <th key={k} className="p-3">
-                    <Link
-                      href={q({
-                        sort: k,
-                        dir: sort === k && !asc ? 'asc' : 'desc',
-                        page: 1,
-                      })}
-                    >
-                      {l}
-                      {sort === k ? (asc ? ' ▲' : ' ▼') : ''}
-                    </Link>
-                  </th>
-                ))}
-              </tr>
-            </thead>
+        <div className="flex flex-col justify-between gap-3 border-b border-slate-200/70 p-4 dark:border-white/10 sm:flex-row sm:items-center sm:p-5">
+          <div>
+            <h2 className="font-bold text-navy dark:text-white">
+              Historial de inmersiones
+            </h2>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              {filtered
+                ? 'Resultados según los filtros seleccionados'
+                : 'Todas tus inmersiones registradas'}
+            </p>
+          </div>
 
-            <tbody>
-              {data.map((d: any) => (
-                <tr key={d.id} className="border-t row-hover">
-                  {[
-                    d.dive_number,
-                    d.dive_date,
-                    d.site,
-                    d.max_depth_m,
-                    d.duration_min,
-                    d.work_task?.slice(0, 40) ?? '—',
-                    d.rating ?? '—',
-                  ].map((c, i) => (
-                    <td key={i} className="p-3">
-                      <Link
-                        href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
-                        className="block"
-                      >
-                        {c}
-                        {i === 0 && d.modified_since_review ? ' ✎' : ''}
-                      </Link>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <a
+            href={exp}
+            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-teal-600/25 bg-teal-500/10 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-500/20 dark:text-teal-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <path d="m7 10 5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
+            Exportar CSV
+          </a>
         </div>
-      )}
 
-      <div className="mt-4 flex items-center gap-3 text-sm">
-        {page > 1 && (
-          <Link
-            href={q({ page: page - 1 })}
-            className="rounded border px-3 py-1"
-          >
-            ← Anterior
-          </Link>
+        {!data?.length ? (
+          <div className="px-5 py-16 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
+              ◉
+            </div>
+
+            <h3 className="mt-5 text-lg font-bold text-navy dark:text-white">
+              {filtered
+                ? 'No hay resultados'
+                : 'Tu libro de inmersiones está vacío'}
+            </h3>
+
+            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
+              {filtered
+                ? 'No hemos encontrado inmersiones que coincidan con esos filtros. Prueba a modificarlos.'
+                : 'Cuando registres tu primera inmersión, aparecerá aquí todo su historial.'}
+            </p>
+
+            {filtered ? (
+              <Link href="/dives" className="btn mt-5 inline-flex">
+                Quitar filtros
+              </Link>
+            ) : (
+              <Link href="/dives/new" className="btn mt-5 inline-flex">
+                + Registrar inmersión
+              </Link>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[850px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200/70 bg-slate-100/70 text-xs uppercase tracking-wide text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                    {COLS.map(([k, l]) => (
+                      <th key={k} className="whitespace-nowrap px-4 py-4 font-semibold">
+                        <Link
+                          href={q({
+                            sort: k,
+                            dir: sort === k && !asc ? 'asc' : 'desc',
+                            page: 1,
+                          })}
+                          className="transition hover:text-teal-700 dark:hover:text-cyan-300"
+                        >
+                          {l}
+                          <span className="ml-1 text-teal-600 dark:text-cyan-300">
+                            {sort === k ? (asc ? '↑' : '↓') : ''}
+                          </span>
+                        </Link>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {data.map((d: any) => (
+                    <tr
+                      key={d.id}
+                      className="border-b border-slate-200/50 transition hover:bg-blue-50/60 dark:border-white/5 dark:hover:bg-white/5"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
+                          className="font-bold text-teal-800 hover:underline dark:text-cyan-300"
+                        >
+                          #{d.dive_number}
+                          {d.modified_since_review && (
+                            <span
+                              className="ml-1 text-amber-600"
+                              title="Modificada desde la última revisión"
+                            >
+                              ✎
+                            </span>
+                          )}
+                        </Link>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-slate-600 dark:text-slate-300">
+                        <Link
+                          href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
+                          className="block hover:text-teal-700 dark:hover:text-cyan-300"
+                        >
+                          {formatDate(d.dive_date)}
+                        </Link>
+                      </td>
+
+                      <td className="max-w-[220px] px-4 py-4 font-medium text-navy dark:text-white">
+                        <Link
+                          href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
+                          className="block truncate hover:text-teal-700 dark:hover:text-cyan-300"
+                        >
+                          {d.site || '—'}
+                        </Link>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-slate-600 dark:text-slate-300">
+                        <Link href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}>
+                          {d.max_depth_m != null ? `${d.max_depth_m} m` : '—'}
+                        </Link>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-slate-600 dark:text-slate-300">
+                        <Link href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}>
+                          {d.duration_min != null ? `${d.duration_min} min` : '—'}
+                        </Link>
+                      </td>
+
+                      <td className="max-w-[180px] px-4 py-4 text-slate-600 dark:text-slate-300">
+                        <Link
+                          href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
+                          className="block truncate"
+                        >
+                          {d.work_task?.slice(0, 40) || '—'}
+                        </Link>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <Link href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}>
+                          {d.rating != null ? (
+                            <span className="inline-flex rounded-lg bg-amber-100 px-2.5 py-1 font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
+                              {d.rating}/10
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* PAGINACIÓN */}
+            <div className="flex flex-col gap-3 border-t border-slate-200/70 p-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Mostrando {data.length} de {total} inmersiones
+              </p>
+
+              <div className="flex items-center gap-2">
+                {page > 1 ? (
+                  <Link
+                    href={q({ page: page - 1 })}
+                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
+                  >
+                    ← Anterior
+                  </Link>
+                ) : (
+                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-sm text-slate-400 dark:border-white/5">
+                    ← Anterior
+                  </span>
+                )}
+
+                <span className="rounded-xl bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800 dark:bg-blue-400/15 dark:text-cyan-300">
+                  {page} / {pages}
+                </span>
+
+                {page < pages ? (
+                  <Link
+                    href={q({ page: page + 1 })}
+                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
+                  >
+                    Siguiente →
+                  </Link>
+                ) : (
+                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-sm text-slate-400 dark:border-white/5">
+                    Siguiente →
+                  </span>
+                )}
+              </div>
+            </div>
+          </>
         )}
-
-        <span>
-          Página {page} de {pages}
-        </span>
-
-        {page < pages && (
-          <Link
-            href={q({ page: page + 1 })}
-            className="rounded border px-3 py-1"
-          >
-            Siguiente →
-          </Link>
-        )}
-      </div>
-    </>
+      </section>
+    </div>
   )
 }
