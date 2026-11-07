@@ -7,11 +7,30 @@ const back = (k: string, m: string): never => redirect(`/profile?${k}=${encodeUR
 async function me() { const sb = createClient(); const { data: { user } } = await sb.auth.getUser(); if (!user) redirect('/login'); return { sb, id: user.id } }
 export async function saveProfile(fd: FormData) {
   const { sb, id } = await me()
+
   const name = s(fd, 'full_name')
+  const language = String(fd.get('language') ?? 'ca')
+
   if (!name) back('error', 'El nombre es obligatorio.')
-  const { error } = await sb.from('profiles').update({ full_name: name, specialty: s(fd, 'specialty'), organization: s(fd, 'organization') }).eq('id', id)
+
+  if (!['ca', 'es', 'en'].includes(language)) {
+    back('error', 'El idioma seleccionado no es válido.')
+  }
+
+  const { error } = await sb
+    .from('profiles')
+    .update({
+      full_name: name,
+      specialty: s(fd, 'specialty'),
+      organization: s(fd, 'organization'),
+      language,
+    })
+    .eq('id', id)
+
   if (error) back('error', error.message)
-  revalidatePath('/', 'layout'); back('ok', 'Ficha guardada.')
+
+  revalidatePath('/', 'layout')
+  back('ok', 'Ficha guardada.')
 }
 export async function addCert(fd: FormData) {
   const { sb, id } = await me()
