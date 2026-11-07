@@ -170,3 +170,42 @@ a, button, input, select, textarea { transition-property: color, background-colo
     max-width: 288px !important;
   }
 }
+/* LOGBOOK - DESPLEGABLES ADAPTADOS AL TEMA */
+
+select,
+select.input,
+select option,
+select optgroup {
+  background-color: var(--card-solid);
+  color: var(--fg);
+}
+
+select {
+  border-color: var(--line);
+  color-scheme: light;
+}
+
+.dark select,
+.dark select.input {
+  background-color: #0d2433;
+  color: #e6f2f5;
+  border-color: rgba(255, 255, 255, 0.18);
+  color-scheme: dark;
+}
+
+.dark select option,
+.dark select optgroup {
+  background-color: #0d2433;
+  color: #e6f2f5;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.dark select option:checked {
+  background-color: #155e68;
+  color: #ffffff;
+}
