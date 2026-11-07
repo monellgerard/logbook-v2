@@ -141,26 +141,39 @@ export default function Sidebar({
         data-collapsed={collapsed}
         style={{
           width: collapsed ? '84px' : '288px',
+          minWidth: collapsed ? '84px' : '288px',
+          maxWidth: collapsed ? '84px' : '288px',
           flexShrink: 0,
+          boxSizing: 'border-box',
         }}
         className={`side fixed left-0 top-0 z-50 flex h-screen flex-col transition-[width,transform] duration-300 md:sticky md:top-3 md:m-3 md:h-[calc(100vh-1.5rem)] ${
           open ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        {/* Logo */}
-        <div className="sidebar-header flex items-center gap-3 px-4 pb-2 pt-5">
-          <Logo size={46} />
+        {/* Logo y control de anchura */}
+        <div
+          className={`sidebar-header flex items-center ${
+            collapsed
+              ? 'flex-col justify-center gap-2 px-2 pb-3 pt-4'
+              : 'gap-3 px-4 pb-2 pt-5'
+          }`}
+        >
+          <Logo size={collapsed ? 38 : 46} />
 
-          <span className="sidebar-label text-xl font-extrabold tracking-tight">
-            LogBook
-          </span>
+          {!collapsed && (
+            <span className="text-xl font-extrabold tracking-tight">
+              LogBook
+            </span>
+          )}
 
           <button
             type="button"
             onClick={toggle}
             aria-label={collapsed ? t.expand : t.collapse}
             title={collapsed ? t.expand : t.collapse}
-            className="nav-mini sidebar-toggle ml-auto hidden shrink-0 place-items-center md:grid"
+            className={`nav-mini hidden shrink-0 place-items-center md:grid ${
+              collapsed ? '' : 'ml-auto'
+            }`}
           >
             <Icon
               name={collapsed ? 'right' : 'left'}
@@ -170,23 +183,33 @@ export default function Sidebar({
         </div>
 
         {/* Nueva inmersión */}
-        <div className="sidebar-new px-3 pb-3 pt-2">
+        <div
+          className={`sidebar-new pb-3 pt-2 ${
+            collapsed ? 'px-2' : 'px-3'
+          }`}
+        >
           <Link
             href="/dives/new"
             title={t.newDive}
-            className="btn w-full"
+            className={`btn w-full ${
+              collapsed ? '!px-2' : ''
+            }`}
           >
             <Icon name="plus" className="h-5 w-5 shrink-0" />
-            <span className="sidebar-label">{t.newDive}</span>
+            {!collapsed && <span>{t.newDive}</span>}
           </Link>
         </div>
 
         {/* Navegación */}
-        <nav className="sidebar-nav flex-1 overflow-y-auto px-3 pb-2">
+        <nav
+          className={`sidebar-nav min-h-0 flex-1 overflow-y-auto pb-2 ${
+            collapsed ? 'px-2' : 'px-3'
+          }`}
+        >
           {groups.map((g) => (
             <div key={g} className="mb-3">
-              {g !== items[0]?.group && (
-                <p className="sidebar-label eyebrow mb-1.5 mt-3 px-3">
+              {!collapsed && g !== items[0]?.group && (
+                <p className="eyebrow mb-1.5 mt-3 px-3">
                   {g}
                 </p>
               )}
@@ -199,24 +222,36 @@ export default function Sidebar({
                     href={i.href}
                     title={i.label}
                     data-active={i.href === best}
-                    className="nav-btn"
+                    className={`nav-btn ${
+                      collapsed ? '!justify-center !px-2' : ''
+                    }`}
                   >
                     <Icon
                       name={i.icon}
                       className="h-5 w-5 shrink-0"
                     />
-                    <span className="sidebar-label truncate">
-                      {i.label}
-                    </span>
+                    {!collapsed && (
+                      <span className="truncate">{i.label}</span>
+                    )}
                   </Link>
                 ))}
             </div>
           ))}
         </nav>
 
-        {/* Usuario */}
-        <div className="sidebar-footer space-y-1 border-t p-3">
-          <div className="sidebar-user mb-2 flex items-center gap-3 px-2">
+        {/* Usuario y preferencias */}
+        <div
+          className={`sidebar-footer space-y-1 border-t ${
+            collapsed ? 'p-2' : 'p-3'
+          }`}
+        >
+          <div
+            className={`sidebar-user mb-2 flex items-center ${
+              collapsed
+                ? 'justify-center px-0'
+                : 'gap-3 px-2'
+            }`}
+          >
             {avatar ? (
               <img
                 src={avatar}
@@ -229,31 +264,38 @@ export default function Sidebar({
               </span>
             )}
 
-            <div className="sidebar-label min-w-0">
-              <div className="truncate text-sm font-semibold">
-                {name}
+            {!collapsed && (
+              <div className="min-w-0">
+                <div className="truncate text-sm font-semibold">
+                  {name}
+                </div>
+                <div className="text-xs text-slate-500">{role}</div>
               </div>
-              <div className="text-xs text-slate-500">{role}</div>
-            </div>
+            )}
           </div>
 
           {/* Tema */}
           <ThemeToggle
             bare
-            className="nav-btn w-full"
-            labelClass="sidebar-label"
+            className={`nav-btn w-full ${
+              collapsed ? '!justify-center !px-2' : ''
+            }`}
+            labelClass={collapsed ? 'hidden' : ''}
           />
 
           {/* Selector de idioma */}
-          <div className="px-1 py-2">
-            <div className="sidebar-label mb-2 px-1 text-xs font-medium text-slate-500">
-              {t.language}
-            </div>
+          <div className={collapsed ? 'px-0 py-2' : 'px-1 py-2'}>
+            {!collapsed && (
+              <div className="mb-2 px-1 text-xs font-medium text-slate-500">
+                {t.language}
+              </div>
+            )}
 
             <LanguageSelector
               language={language}
               saveLanguage={saveLanguage}
               errorMessage={t.saveError}
+              collapsed={collapsed}
             />
           </div>
 
@@ -261,11 +303,13 @@ export default function Sidebar({
           <form action={signOut}>
             <button
               type="submit"
-              className="nav-btn w-full"
               title={t.signOut}
+              className={`nav-btn w-full ${
+                collapsed ? '!justify-center !px-2' : ''
+              }`}
             >
               <Icon name="out" className="h-5 w-5 shrink-0" />
-              <span className="sidebar-label">{t.signOut}</span>
+              {!collapsed && <span>{t.signOut}</span>}
             </button>
           </form>
         </div>
@@ -278,10 +322,12 @@ function LanguageSelector({
   language,
   saveLanguage,
   errorMessage,
+  collapsed,
 }: {
   language: string
   saveLanguage: (formData: FormData) => Promise<void>
   errorMessage: string
+  collapsed: boolean
 }) {
   const [selected, setSelected] = useState(language)
   const [saving, setSaving] = useState(false)
@@ -318,6 +364,24 @@ function LanguageSelector({
     } finally {
       setSaving(false)
     }
+  }
+
+  if (collapsed) {
+    return (
+      <select
+        aria-label="Language"
+        value={selected}
+        disabled={saving}
+        onChange={(e) => changeLanguage(e.target.value)}
+        className="w-full rounded-full border border-slate-300/20 bg-slate-500/10 px-1 py-2 text-center text-[10px] font-bold text-current outline-none"
+      >
+        {languages.map((item) => (
+          <option key={item.code} value={item.code}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+    )
   }
 
   return (
