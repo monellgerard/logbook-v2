@@ -1,7 +1,7 @@
-
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin'
-import { applyFilters, type P } from '@/lib/filters' import FiltersPanel from './filters-panel'
+import { applyFilters, type P } from '@/lib/filters'
+import FiltersPanel from './filters-panel'
 
 const PAGE = 25
 
@@ -11,18 +11,14 @@ const ST: Record<string, string> = {
   needs_correction: 'Necesita corrección',
 }
 
-const STATUS_STYLE: Record<string, string> = {
-  pending: 'bg-amber-100 text-amber-800 dark:bg-amber-400/10 dark:text-amber-300',
-  reviewed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-400/10 dark:text-emerald-300',
-  needs_correction: 'bg-red-100 text-red-800 dark:bg-red-400/10 dark:text-red-300',
-}
-
 export default async function ClassDives(props: {
-  searchParams: Promise<P & {
-    page?: string
-    student?: string
-    review?: string
-  }>
+  searchParams: Promise<
+    P & {
+      page?: string
+      student?: string
+      review?: string
+    }
+  >
 }) {
   const sp = await props.searchParams
   const { sb } = await requireAdmin()
@@ -47,22 +43,13 @@ export default async function ClassDives(props: {
   if (sp.student) q = q.eq('user_id', sp.student)
   if (sp.review) q = q.eq('review_status', sp.review)
 
-  const {
-    data,
-    count,
-    error,
-  } = await applyFilters(q, sp)
+  const { data, count, error } = await applyFilters(q, sp)
     .order('dive_date', { ascending: false })
     .order('id')
     .range((page - 1) * PAGE, page * PAGE - 1)
 
   if (error) {
-    return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/5 dark:text-red-300">
-        <p className="font-semibold">No se han podido cargar las inmersiones.</p>
-        <p className="mt-1">{error.message}</p>
-      </div>
-    )
+    return <p className="text-red-700">Error: {error.message}</p>
   }
 
   const pages = Math.max(1, Math.ceil((count ?? 0) / PAGE))
@@ -89,231 +76,153 @@ export default async function ClassDives(props: {
   ].filter(Boolean).length
 
   return (
-    <div className="space-y-6">
-
+    <>
       {/* CABECERA */}
-      <header className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#082b43] via-[#0b3b59] to-[#087e91] p-6 text-white shadow-xl sm:p-8">
-        <div className="pointer-events-none absolute -right-12 -top-24 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 right-1/4 h-52 w-52 rounded-full bg-blue-400/10 blur-3xl" />
-
-        <div className="relative z-10">
-          <Link
-            href="/admin"
-            className="text-xs font-medium text-cyan-200 transition hover:text-white"
-          >
-            ← Volver a administración
-          </Link>
-
-          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
-            Seguimiento y evaluación
-          </p>
-
-          <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            Inmersiones de la clase
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-blue-100/80">
-            Consulta las inmersiones registradas por tus alumnos y supervisa
-            su estado de revisión.
-          </p>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur">
-              <span className="text-xs text-blue-100/70">Registros encontrados</span>
-              <p className="mt-0.5 text-xl font-semibold">{count ?? 0}</p>
-            </div>
-
-            <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur">
-              <span className="text-xs text-blue-100/70">Página actual</span>
-              <p className="mt-0.5 text-xl font-semibold">
-                {page} <span className="text-sm font-normal text-blue-100/70">/ {pages}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* FILTROS */}
-      {/* FILTROS */}
-<FiltersPanel
-  student={sp.student}
-  year={sp.year}
-  month={sp.month}
-  review={sp.review}
-  from={sp.from}
-  to={sp.to}
-  site={sp.site}
-  work={sp.work}
-  students={students ?? []}
-  years={years}
-  activeFilters={activeFilters}
-  exportUrl={`/export?scope=class&${qs({})}`}
-/>
-      {/* RESULTADOS */}
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow">Registro de actividad</p>
-            <h2 className="mt-1 text-xl font-semibold text-navy dark:text-white">
-              Resultados
-            </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {count ?? 0} inmersiones encontradas
-            </p>
-          </div>
-
-          <span className="rounded-lg border border-slate-200 bg-white/70 px-3 py-2 text-xs font-medium text-slate-500 dark:border-white/10 dark:bg-slate-800 dark:text-slate-400">
-            Mostrando {data?.length ?? 0} de {count ?? 0}
-          </span>
-        </div>
-
-        {!data?.length ? (
-          <div className="rounded-2xl border border-white/40 bg-white/75 px-5 py-14 text-center shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
-            <div className="text-4xl">🤿</div>
-            <h3 className="mt-3 font-semibold text-navy dark:text-white">
-              No hay inmersiones
-            </h3>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              No se han encontrado registros con los filtros seleccionados.
-            </p>
-            <Link
-              href="/admin/dives"
-              className="mt-5 inline-flex rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
-            >
-              Quitar filtros
-            </Link>
-          </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-white/40 bg-white/75 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[950px] text-left text-sm">
-                <thead className="bg-slate-100/80 text-xs uppercase tracking-wider text-slate-500 dark:bg-slate-800/80 dark:text-slate-400">
-                  <tr>
-                    {[
-                      'Alumno',
-                      'Nº',
-                      'Fecha',
-                      'Lugar',
-                      'Prof.',
-                      'Min',
-                      'Trabajo',
-                      'Revisión',
-                    ].map((h) => (
-                      <th key={h} className="px-4 py-4">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-slate-200/70 dark:divide-white/10">
-                  {data.map((d: any) => {
-                    const status = d.review_status
-                    const statusLabel = ST[status] || 'Sin estado'
-                    const detailUrl = `/dives/${d.id}?from=${encodeURIComponent(`/admin/dives?${qs({})}`)}`
-
-                    return (
-                      <tr
-                        key={d.id}
-                        className="transition hover:bg-cyan-50/40 dark:hover:bg-cyan-400/5"
-                      >
-                        <td className="px-4 py-3">
-                          <Link
-                            href={detailUrl}
-                            className="font-semibold text-navy hover:text-cyan-700 dark:text-white dark:hover:text-cyan-300"
-                          >
-                            {d.profiles?.full_name || '—'}
-                          </Link>
-                        </td>
-
-                        <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
-                          {d.dive_number ?? '—'}
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">
-                          {d.dive_date}
-                        </td>
-
-                        <td className="max-w-[180px] px-4 py-3 font-medium text-navy dark:text-white">
-                          <Link href={detailUrl} className="block truncate hover:text-cyan-700 dark:hover:text-cyan-300">
-                            {d.site || '—'}
-                          </Link>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">
-                          {d.max_depth_m != null ? `${d.max_depth_m} m` : '—'}
-                        </td>
-
-                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                          {d.duration_min ?? '—'}
-                        </td>
-
-                        <td className="max-w-[180px] px-4 py-3 text-slate-600 dark:text-slate-300">
-                          <Link href={detailUrl} className="block truncate">
-                            {d.work_task?.slice(0, 35) || '—'}
-                          </Link>
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <Link href={detailUrl} className="inline-flex flex-col items-start gap-1">
-                            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[status] || 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
-                              {statusLabel}
-                            </span>
-
-                            {d.modified_since_review && (
-                              <span className="text-[10px] font-medium text-amber-700 dark:text-amber-300">
-                                ✎ Modificada
-                              </span>
-                            )}
-                          </Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* PAGINACIÓN */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/40 bg-white/75 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Página <strong className="text-navy dark:text-white">{page}</strong> de{' '}
-          <strong className="text-navy dark:text-white">{pages}</strong>
-          <span className="hidden sm:inline"> · {PAGE} registros por página</span>
+      <div className="mb-6">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-600 dark:text-cyan-400">
+          Administración
         </p>
 
-        <div className="flex items-center gap-2">
-          {page > 1 ? (
-            <Link
-              href={`/admin/dives?${qs({ page: page - 1 })}`}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
-            >
-              ← Anterior
-            </Link>
-          ) : (
-            <span className="rounded-xl border border-slate-200/50 px-4 py-2 text-sm text-slate-300 dark:border-white/5 dark:text-slate-600">
-              ← Anterior
-            </span>
-          )}
+        <h1 className="text-2xl font-bold text-navy dark:text-white sm:text-3xl">
+          Inmersiones de la clase
+        </h1>
 
-          {page < pages ? (
-            <Link
-              href={`/admin/dives?${qs({ page: page + 1 })}`}
-              className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
-            >
-              Siguiente →
-            </Link>
-          ) : (
-            <span className="rounded-xl border border-slate-200/50 px-4 py-2 text-sm text-slate-300 dark:border-white/5 dark:text-slate-600">
-              Siguiente →
-            </span>
-          )}
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Consulta y revisa las inmersiones registradas por tus alumnos.
+        </p>
+
+        <div className="mt-4 inline-flex items-center rounded-xl border border-cyan-200/70 bg-cyan-50/70 px-4 py-2 text-sm font-semibold text-cyan-800 dark:border-cyan-400/20 dark:bg-cyan-400/10 dark:text-cyan-300">
+          {count ?? 0} inmersiones registradas
         </div>
       </div>
 
-    </div>
+      {/* FILTROS */}
+      <FiltersPanel
+        student={sp.student}
+        year={sp.year}
+        month={sp.month}
+        review={sp.review}
+        from={sp.from}
+        to={sp.to}
+        site={sp.site}
+        work={sp.work}
+        students={students ?? []}
+        years={years}
+        activeFilters={activeFilters}
+        exportUrl={`/export?scope=class&${qs({})}`}
+      />
+
+      {/* RESULTADOS */}
+      {!data?.length ? (
+        <div className="mt-5 rounded-2xl border border-white/40 bg-white/75 p-8 text-center shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
+          <div className="mb-3 text-3xl">⌕</div>
+          <p className="font-semibold text-navy dark:text-white">
+            No hay inmersiones
+          </p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            No se han encontrado inmersiones con los filtros seleccionados.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-5 overflow-hidden rounded-2xl border border-white/40 bg-white/80 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 px-5 py-4 dark:border-white/10">
+            <div>
+              <h2 className="font-semibold text-navy dark:text-white">
+                Registro de inmersiones
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Listado de inmersiones de todos los alumnos
+              </p>
+            </div>
+
+            <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              {data.length} resultados
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50/80 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
+                <tr>
+                  {[
+                    'Alumno',
+                    'Nº',
+                    'Fecha',
+                    'Lugar',
+                    'Prof.',
+                    'Min',
+                    'Trabajo',
+                    'Revisión',
+                  ].map((h) => (
+                    <th key={h} className="whitespace-nowrap p-3 font-semibold">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {data.map((d: any) => (
+                  <tr
+                    key={d.id}
+                    className="border-t border-slate-100 transition hover:bg-cyan-50/40 dark:border-white/5 dark:hover:bg-cyan-400/5"
+                  >
+                    {[
+                      d.profiles?.full_name || '—',
+                      d.dive_number,
+                      d.dive_date,
+                      d.site,
+                      d.max_depth_m,
+                      d.duration_min,
+                      d.work_task?.slice(0, 35) ?? '—',
+                      (ST[d.review_status] ?? 'Sin estado') +
+                        (d.modified_since_review ? ' ✎ modificada' : ''),
+                    ].map((c, i) => (
+                      <td key={i} className="whitespace-nowrap p-3">
+                        <Link
+                          href={`/dives/${d.id}?from=${encodeURIComponent(
+                            `/admin/dives?${qs({})}`
+                          )}`}
+                          className="block text-slate-700 transition hover:text-cyan-700 dark:text-slate-300 dark:hover:text-cyan-300"
+                        >
+                          {c}
+                        </Link>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* PAGINACIÓN */}
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <span className="text-slate-500 dark:text-slate-400">
+          Página {page} de {pages}
+        </span>
+
+        <div className="flex items-center gap-2">
+          {page > 1 && (
+            <Link
+              href={`/admin/dives?${qs({ page: page - 1 })}`}
+              className="rounded-xl border border-slate-200 bg-white/70 px-4 py-2 font-medium text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+            >
+              ← Anterior
+            </Link>
+          )}
+
+          {page < pages && (
+            <Link
+              href={`/admin/dives?${qs({ page: page + 1 })}`}
+              className="rounded-xl border border-slate-200 bg-white/70 px-4 py-2 font-medium text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+            >
+              Siguiente →
+            </Link>
+          )}
+        </div>
+      </div>
+    </>
   )
 }
