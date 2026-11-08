@@ -3,6 +3,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { adminClient } from '@/lib/supabase/admin'
 
 const site = () => process.env.SITE_URL || 'http://localhost:3000'
@@ -91,7 +92,26 @@ export async function changeOwnPassword(fd: FormData) {
     go('/profile', 'error', 'La nueva contraseña debe ser diferente de la actual.')
   }
 
-  const { error: verifyError } = await sb.auth.signInWithPassword({
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    go('/profile', 'error', 'No se pudo verificar la contraseña actual.')
+  }
+
+  // Cliente independiente: verifica la contraseña sin modificar
+  // la sesión activa del alumno.
+  const verifier = createSupabaseClient(supabaseUrl!, supabaseKey!, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  })
+
+  const { error: verifyError } = await verifier.auth.signInWithPassword({
     email: user.email,
     password: currentPassword,
   })
@@ -100,6 +120,7 @@ export async function changeOwnPassword(fd: FormData) {
     go('/profile', 'error', 'La contraseña actual no es correcta.')
   }
 
+  // Actualiza la contraseña usando la sesión original.
   const { error } = await sb.auth.updateUser({
     password: newPassword,
   })
