@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { signIn } from '@/app/actions'
 import { Shell, Msg } from '../auth-shell'
+import PasswordInput from '@/components/password-input'
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ error?: string }>
@@ -55,21 +56,15 @@ export default async function LoginPage(props: {
             </Link>
           </div>
 
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             name="password"
-            required
             autoComplete="current-password"
             placeholder="Introduce tu contraseña"
-            className="input"
           />
         </div>
 
-        <button
-          type="submit"
-          className="btn mt-3 w-full"
-        >
+        <button type="submit" className="btn mt-3 w-full">
           Iniciar sesión
         </button>
       </form>
