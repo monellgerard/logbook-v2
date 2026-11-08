@@ -6,6 +6,207 @@ import { Msg } from '../../auth-shell'
 import { saveProfile, addCert, deleteCert } from './actions'
 import PhotoUploader from './photo-uploader'
 
+const translations = {
+  ca: {
+    personalArea: 'Àrea personal',
+    profile: 'El meu perfil',
+    description: 'La teva fitxa personal, experiència sota l’aigua i certificacions professionals.',
+    admin: 'Administrador',
+    diver: 'Bussejador',
+    noName: 'Sense nom',
+    completeData: 'Completa les teves dades per personalitzar la teva fitxa',
+    pendingPhoto: 'Foto pendent d’aprovació',
+    pendingDescription: 'El professor ha d’aprovar la teva fotografia abans que sigui visible.',
+    rejectedPhoto: 'Fotografia rebutjada',
+    uploadAnother: 'Pots pujar una altra fotografia.',
+    photoApproval: 'El professor ha d’aprovar la teva foto abans que sigui visible.',
+    activitySummary: 'Resum d’activitat',
+    activeYears: 'Anys d’activitat',
+    certifications: 'Certificacions',
+    profileStatus: 'Perfil',
+    customized: 'Personalitzat',
+    incomplete: 'Incomplet',
+    activity: 'La meva activitat',
+    activityDescription: 'Resum de tota la teva trajectòria registrada.',
+    dives: 'Immersions',
+    diveRecords: 'Registres realitzats',
+    underwaterHours: 'Hores sota l’aigua',
+    accumulatedTime: 'Temps acumulat',
+    maxDepth: 'Profunditat màxima',
+    greatestDepth: 'Profunditat més gran',
+    averageDuration: 'Durada mitjana',
+    perDive: 'Per immersió',
+    firstDive: 'Primera immersió',
+    firstRecord: 'Data del primer registre',
+    lastDive: 'Última immersió',
+    lastRecord: 'Data de l’últim registre',
+    personalData: 'Dades personals',
+    personalDescription: 'Informació del teu perfil professional.',
+    fullName: 'Nom i cognoms *',
+    fullNamePlaceholder: 'Nom complet',
+    specialty: 'Especialitat o funció',
+    specialtyPlaceholder: 'Ex. Bussejador professional',
+    organization: 'Centre formatiu o empresa',
+    organizationPlaceholder: 'Nom de l’empresa o centre',
+    save: 'Desar els canvis',
+    yearlyEvolution: 'Evolució per anys',
+    yearlyDescription: 'Immersions i hores acumulades cada any.',
+    year: 'Any',
+    noDives: 'Quan registris immersions, aquí veuràs la teva evolució.',
+    hours: 'Hores',
+    maxDepthShort: 'Prof. màx.',
+    qualifications: 'Certificacions i titulacions',
+    qualificationsDescription: 'Les teves acreditacions i qualificacions professionals.',
+    noCertifications: 'Encara no tens certificacions.',
+    addQualifications: 'Afegeix les teves titulacions per tenir-les organitzades a la teva fitxa.',
+    obtained: 'Obtinguda:',
+    expiry: 'Caducitat:',
+    expired: 'CADUCADA',
+    remove: 'Eliminar',
+    addCertification: 'Afegir certificació',
+    addDescription: 'Introdueix les dades que apareixen a la teva acreditació.',
+    titlePlaceholder: 'Titulació *',
+    issuerPlaceholder: 'Organisme emissor *',
+    obtainedDate: 'Data d’obtenció *',
+    expiryDate: 'Caducitat (si existeix)',
+    numberPlaceholder: 'Núm. de certificació (opcional)',
+    photoAlt: 'La teva fotografia',
+    pendingAlt: 'Fotografia pendent',
+  },
+  es: {
+    personalArea: 'Área personal',
+    profile: 'Mi perfil',
+    description: 'Tu ficha personal, experiencia bajo el agua y certificaciones profesionales.',
+    admin: 'Administrador',
+    diver: 'Buceador',
+    noName: 'Sin nombre',
+    completeData: 'Completa tus datos para personalizar tu ficha',
+    pendingPhoto: 'Foto pendiente de aprobación',
+    pendingDescription: 'El profesor debe aprobar tu fotografía antes de que sea visible.',
+    rejectedPhoto: 'Fotografía rechazada',
+    uploadAnother: 'Puedes subir otra fotografía.',
+    photoApproval: 'El profesor debe aprobar tu foto antes de que sea visible.',
+    activitySummary: 'Resumen de actividad',
+    activeYears: 'Años de actividad',
+    certifications: 'Certificaciones',
+    profileStatus: 'Perfil',
+    customized: 'Personalizado',
+    incomplete: 'Incompleto',
+    activity: 'Mi actividad',
+    activityDescription: 'Resumen de toda tu trayectoria registrada.',
+    dives: 'Inmersiones',
+    diveRecords: 'Registros realizados',
+    underwaterHours: 'Horas bajo el agua',
+    accumulatedTime: 'Tiempo acumulado',
+    maxDepth: 'Profundidad máxima',
+    greatestDepth: 'Mayor profundidad',
+    averageDuration: 'Duración media',
+    perDive: 'Por inmersión',
+    firstDive: 'Primera inmersión',
+    firstRecord: 'Fecha del primer registro',
+    lastDive: 'Última inmersión',
+    lastRecord: 'Fecha del último registro',
+    personalData: 'Datos personales',
+    personalDescription: 'Información de tu perfil profesional.',
+    fullName: 'Nombre y apellidos *',
+    fullNamePlaceholder: 'Nombre completo',
+    specialty: 'Especialidad o función',
+    specialtyPlaceholder: 'Ej. Buceador profesional',
+    organization: 'Centro formativo o empresa',
+    organizationPlaceholder: 'Nombre de empresa o centro',
+    save: 'Guardar cambios',
+    yearlyEvolution: 'Evolución por años',
+    yearlyDescription: 'Inmersiones y horas acumuladas cada año.',
+    year: 'Año',
+    noDives: 'Cuando registres inmersiones verás aquí tu evolución.',
+    hours: 'Horas',
+    maxDepthShort: 'Prof. máx.',
+    qualifications: 'Certificaciones y titulaciones',
+    qualificationsDescription: 'Tus acreditaciones y cualificaciones profesionales.',
+    noCertifications: 'Todavía no tienes certificaciones.',
+    addQualifications: 'Añade tus titulaciones para tenerlas organizadas en tu ficha.',
+    obtained: 'Obtenida:',
+    expiry: 'Caducidad:',
+    expired: 'CADUCADA',
+    remove: 'Quitar',
+    addCertification: 'Añadir certificación',
+    addDescription: 'Introduce los datos que aparecen en tu acreditación.',
+    titlePlaceholder: 'Titulación *',
+    issuerPlaceholder: 'Organismo emisor *',
+    obtainedDate: 'Fecha de obtención *',
+    expiryDate: 'Caducidad (si existe)',
+    numberPlaceholder: 'N.º de certificación (opcional)',
+    photoAlt: 'Tu fotografía',
+    pendingAlt: 'Fotografía pendiente',
+  },
+  en: {
+    personalArea: 'Personal area',
+    profile: 'My profile',
+    description: 'Your personal profile, underwater experience and professional certifications.',
+    admin: 'Administrator',
+    diver: 'Diver',
+    noName: 'No name',
+    completeData: 'Complete your details to personalize your profile',
+    pendingPhoto: 'Photo awaiting approval',
+    pendingDescription: 'Your instructor must approve your photo before it becomes visible.',
+    rejectedPhoto: 'Photo rejected',
+    uploadAnother: 'You can upload another photo.',
+    photoApproval: 'Your instructor must approve your photo before it becomes visible.',
+    activitySummary: 'Activity summary',
+    activeYears: 'Years active',
+    certifications: 'Certifications',
+    profileStatus: 'Profile',
+    customized: 'Complete',
+    incomplete: 'Incomplete',
+    activity: 'My activity',
+    activityDescription: 'Summary of your recorded diving history.',
+    dives: 'Dives',
+    diveRecords: 'Recorded entries',
+    underwaterHours: 'Underwater hours',
+    accumulatedTime: 'Total time',
+    maxDepth: 'Maximum depth',
+    greatestDepth: 'Deepest dive',
+    averageDuration: 'Average duration',
+    perDive: 'Per dive',
+    firstDive: 'First dive',
+    firstRecord: 'First recorded date',
+    lastDive: 'Latest dive',
+    lastRecord: 'Most recent recorded date',
+    personalData: 'Personal details',
+    personalDescription: 'Information for your professional profile.',
+    fullName: 'Full name *',
+    fullNamePlaceholder: 'Full name',
+    specialty: 'Specialty or role',
+    specialtyPlaceholder: 'E.g. Professional diver',
+    organization: 'Training centre or company',
+    organizationPlaceholder: 'Company or centre name',
+    save: 'Save changes',
+    yearlyEvolution: 'Yearly progress',
+    yearlyDescription: 'Dives and accumulated hours each year.',
+    year: 'Year',
+    noDives: 'Your progress will appear here once you have recorded dives.',
+    hours: 'Hours',
+    maxDepthShort: 'Max. depth',
+    qualifications: 'Certifications and qualifications',
+    qualificationsDescription: 'Your professional certifications and qualifications.',
+    noCertifications: 'You do not have any certifications yet.',
+    addQualifications: 'Add your qualifications to keep them organized in your profile.',
+    obtained: 'Obtained:',
+    expiry: 'Expiry:',
+    expired: 'EXPIRED',
+    remove: 'Remove',
+    addCertification: 'Add certification',
+    addDescription: 'Enter the details shown on your certificate.',
+    titlePlaceholder: 'Qualification *',
+    issuerPlaceholder: 'Issuing organization *',
+    obtainedDate: 'Date obtained *',
+    expiryDate: 'Expiry date (if applicable)',
+    numberPlaceholder: 'Certification number (optional)',
+    photoAlt: 'Your photo',
+    pendingAlt: 'Pending photo',
+  },
+}
+
 export default async function Profile(props: {
   searchParams: Promise<{ error?: string; ok?: string }>
 }) {
@@ -20,9 +221,14 @@ export default async function Profile(props: {
 
   const { data: p } = await sb
     .from('profiles')
-    .select('full_name, specialty, organization, avatar_path, role')
+    .select('full_name, specialty, organization, avatar_path, role, language')
     .eq('id', uid)
     .single()
+
+  const language =
+    p?.language === 'es' ? 'es' : p?.language === 'en' ? 'en' : 'ca'
+
+  const t = translations[language]
 
   const { data: certs } = await sb
     .from('certifications')
@@ -59,7 +265,7 @@ export default async function Profile(props: {
   const pendingUrl =
     last?.status === 'pending' ? await url(last.path) : undefined
 
-  const t = summarize(all)
+  const stats = summarize(all)
 
   const years = [...new Set(all.map((d) => d.dive_date.slice(0, 4)))]
     .sort()
@@ -74,26 +280,24 @@ export default async function Profile(props: {
   const today = new Date().toISOString().slice(0, 10)
 
   const tiles: [string, string | number, string][] = [
-    ['Inmersiones', t.n, 'Registros realizados'],
-    ['Horas bajo el agua', t.hours.toFixed(1), 'Tiempo acumulado'],
+    [t.dives, stats.n, t.diveRecords],
+    [t.underwaterHours, stats.hours.toFixed(1), t.accumulatedTime],
     [
-      'Profundidad máxima',
-      t.maxDepth !== null ? `${t.maxDepth} m` : '—',
-      'Mayor profundidad',
+      t.maxDepth,
+      stats.maxDepth !== null ? `${stats.maxDepth} m` : '—',
+      t.greatestDepth,
     ],
     [
-      'Duración media',
-      t.avg !== null ? `${t.avg} min` : '—',
-      'Por inmersión',
+      t.averageDuration,
+      stats.avg !== null ? `${stats.avg} min` : '—',
+      t.perDive,
     ],
-    ['Primera inmersión', t.first ?? '—', 'Fecha del primer registro'],
-    ['Última inmersión', t.last ?? '—', 'Fecha del último registro'],
+    [t.firstDive, stats.first ?? '—', t.firstRecord],
+    [t.lastDive, stats.last ?? '—', t.lastRecord],
   ]
 
   return (
     <div className="w-full space-y-6 pb-8">
-
-      {/* CABECERA */}
       <header className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow)] backdrop-blur-xl sm:p-8">
         <div className="pointer-events-none absolute -right-12 -top-20 h-64 w-64 rounded-full bg-cyan-400/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 right-1/3 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
@@ -101,41 +305,36 @@ export default async function Profile(props: {
         <div className="relative">
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--accent-strong)]">
             <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-            Área personal
+            {t.personalArea}
           </span>
 
           <div className="mt-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-[var(--title)] sm:text-4xl">
-                Mi perfil
+                {t.profile}
               </h1>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--muted)]">
-                Tu ficha personal, experiencia bajo el agua y certificaciones
-                profesionales.
+                {t.description}
               </p>
             </div>
 
             <span className="self-start rounded-full border border-[var(--line)] px-3 py-2 text-xs font-medium text-[var(--muted)] sm:self-auto">
-              {isAdmin ? 'Administrador' : 'Buceador'}
+              {isAdmin ? t.admin : t.diver}
             </span>
           </div>
         </div>
       </header>
 
-      {/* MENSAJES */}
       <Msg error={searchParams.error} ok={searchParams.ok} />
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)]">
-
-        {/* COLUMNA DE PERFIL */}
         <aside className="space-y-5 lg:sticky lg:top-6">
-
           <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 text-center shadow-[var(--shadow)] backdrop-blur-xl sm:p-6">
             <div className="relative mx-auto aspect-square w-full max-w-[20rem] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--tint)]">
               {photo ? (
                 <img
                   src={photo}
-                  alt="Tu fotografía"
+                  alt={t.photoAlt}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -148,12 +347,12 @@ export default async function Profile(props: {
             </div>
 
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-[var(--title)]">
-              {p?.full_name || 'Sin nombre'}
+              {p?.full_name || t.noName}
             </h2>
 
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
               {[p?.specialty, p?.organization].filter(Boolean).join(' · ') ||
-                'Completa tus datos para personalizar tu ficha'}
+                t.completeData}
             </p>
 
             <div className="mt-5">
@@ -162,17 +361,12 @@ export default async function Profile(props: {
 
             {!isAdmin && last?.status === 'pending' && (
               <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3 text-left text-xs text-amber-800 dark:text-amber-200">
-                <p className="font-semibold">
-                  ⏳ Foto pendiente de aprobación
-                </p>
-                <p className="mt-1">
-                  El profesor debe aprobar tu fotografía antes de que sea
-                  visible.
-                </p>
+                <p className="font-semibold">⏳ {t.pendingPhoto}</p>
+                <p className="mt-1">{t.pendingDescription}</p>
                 {pendingUrl && (
                   <img
                     src={pendingUrl}
-                    alt="Fotografía pendiente"
+                    alt={t.pendingAlt}
                     className="mx-auto mt-3 h-16 w-16 rounded-xl object-cover"
                   />
                 )}
@@ -181,30 +375,29 @@ export default async function Profile(props: {
 
             {!isAdmin && last?.status === 'rejected' && (
               <div className="mt-4 rounded-xl border border-red-400/30 bg-red-500/10 p-3 text-left text-xs text-red-700 dark:text-red-300">
-                <p className="font-semibold">Fotografía rechazada</p>
+                <p className="font-semibold">{t.rejectedPhoto}</p>
                 {last.reject_reason && (
                   <p className="mt-1">{last.reject_reason}</p>
                 )}
-                <p className="mt-1">Puedes subir otra fotografía.</p>
+                <p className="mt-1">{t.uploadAnother}</p>
               </div>
             )}
 
             {!isAdmin && !last && !photo && (
               <p className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--tint)] p-3 text-xs text-[var(--muted)]">
-                El profesor debe aprobar tu foto antes de que sea visible.
+                {t.photoApproval}
               </p>
             )}
           </section>
 
-          {/* RESUMEN PERSONAL */}
           <section className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow)] backdrop-blur-xl">
             <h3 className="text-sm font-semibold text-[var(--title)]">
-              Resumen de actividad
+              {t.activitySummary}
             </h3>
 
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-[var(--muted)]">Años de actividad</span>
+                <span className="text-[var(--muted)]">{t.activeYears}</span>
                 <span className="font-semibold text-[var(--fg)]">
                   {years.length}
                 </span>
@@ -213,7 +406,7 @@ export default async function Profile(props: {
               <div className="h-px bg-[var(--line)]" />
 
               <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-[var(--muted)]">Certificaciones</span>
+                <span className="text-[var(--muted)]">{t.certifications}</span>
                 <span className="font-semibold text-[var(--fg)]">
                   {certs?.length ?? 0}
                 </span>
@@ -222,26 +415,23 @@ export default async function Profile(props: {
               <div className="h-px bg-[var(--line)]" />
 
               <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-[var(--muted)]">Perfil</span>
+                <span className="text-[var(--muted)]">{t.profileStatus}</span>
                 <span className="font-semibold text-[var(--accent-strong)]">
-                  {p?.full_name ? 'Personalizado' : 'Incompleto'}
+                  {p?.full_name ? t.customized : t.incomplete}
                 </span>
               </div>
             </div>
           </section>
         </aside>
 
-        {/* COLUMNA PRINCIPAL */}
         <div className="min-w-0 space-y-6">
-
-          {/* ESTADÍSTICAS */}
           <section>
             <div className="mb-3">
               <h2 className="text-lg font-bold text-[var(--title)]">
-                Mi actividad
+                {t.activity}
               </h2>
               <p className="mt-1 text-xs text-[var(--muted)]">
-                Resumen de toda tu trayectoria registrada.
+                {t.activityDescription}
               </p>
             </div>
 
@@ -254,11 +444,9 @@ export default async function Profile(props: {
                   <p className="text-xs font-medium text-[var(--muted)]">
                     {k}
                   </p>
-
                   <p className="mt-3 break-words text-2xl font-bold tracking-tight text-[var(--title)]">
                     {v}
                   </p>
-
                   <p className="mt-1 text-[11px] text-[var(--muted)]">
                     {description}
                   </p>
@@ -267,20 +455,18 @@ export default async function Profile(props: {
             </div>
           </section>
 
-          {/* DATOS PERSONALES */}
           <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
             <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-lg text-[var(--accent-strong)]">
                   <Icon name="user" className="h-5 w-5" />
                 </div>
-
                 <div>
                   <h2 className="font-semibold text-[var(--title)]">
-                    Datos personales
+                    {t.personalData}
                   </h2>
                   <p className="mt-1 text-xs text-[var(--muted)]">
-                    Información de tu perfil profesional.
+                    {t.personalDescription}
                   </p>
                 </div>
               </div>
@@ -289,64 +475,62 @@ export default async function Profile(props: {
             <form action={saveProfile} className="fit-grid items-end p-5 sm:p-6">
               <label className="block text-sm">
                 <span className="mb-2 block font-medium text-[var(--fg)]">
-                  Nombre y apellidos *
+                  {t.fullName}
                 </span>
                 <input
                   name="full_name"
                   required
                   defaultValue={p?.full_name}
-                  placeholder="Nombre completo"
+                  placeholder={t.fullNamePlaceholder}
                   className="input"
                 />
               </label>
 
               <label className="block text-sm">
                 <span className="mb-2 block font-medium text-[var(--fg)]">
-                  Especialidad o función
+                  {t.specialty}
                 </span>
                 <input
                   name="specialty"
                   defaultValue={p?.specialty ?? ''}
-                  placeholder="Ej. Buceador profesional"
+                  placeholder={t.specialtyPlaceholder}
                   className="input"
                 />
               </label>
 
               <label className="block text-sm">
                 <span className="mb-2 block font-medium text-[var(--fg)]">
-                  Centro formativo o empresa
+                  {t.organization}
                 </span>
                 <input
                   name="organization"
                   defaultValue={p?.organization ?? ''}
-                  placeholder="Nombre de empresa o centro"
+                  placeholder={t.organizationPlaceholder}
                   className="input"
                 />
               </label>
 
               <div>
                 <button className="btn inline-flex items-center justify-center gap-2">
-                  Guardar cambios
+                  {t.save}
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
             </form>
           </section>
 
-          {/* EVOLUCIÓN ANUAL */}
           <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
             <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-lg text-[var(--accent-strong)]">
                   <Icon name="chart-no-axes-combined" className="h-5 w-5" />
                 </div>
-
                 <div>
                   <h2 className="font-semibold text-[var(--title)]">
-                    Evolución por años
+                    {t.yearlyEvolution}
                   </h2>
                   <p className="mt-1 text-xs text-[var(--muted)]">
-                    Inmersiones y horas acumuladas cada año.
+                    {t.yearlyDescription}
                   </p>
                 </div>
               </div>
@@ -355,7 +539,7 @@ export default async function Profile(props: {
             {!byYear.length ? (
               <div className="p-8 text-center">
                 <p className="text-sm text-[var(--muted)]">
-                  Cuando registres inmersiones verás aquí tu evolución.
+                  {t.noDives}
                 </p>
               </div>
             ) : (
@@ -363,10 +547,10 @@ export default async function Profile(props: {
                 <table className="w-full min-w-[540px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-[var(--line)] text-xs text-[var(--muted)]">
-                      <th className="p-3 font-semibold">Año</th>
-                      <th className="p-3 font-semibold">Inmersiones</th>
-                      <th className="w-1/2 p-3 font-semibold">Horas</th>
-                      <th className="p-3 font-semibold">Prof. máx.</th>
+                      <th className="p-3 font-semibold">{t.year}</th>
+                      <th className="p-3 font-semibold">{t.dives}</th>
+                      <th className="w-1/2 p-3 font-semibold">{t.hours}</th>
+                      <th className="p-3 font-semibold">{t.maxDepthShort}</th>
                     </tr>
                   </thead>
 
@@ -379,11 +563,9 @@ export default async function Profile(props: {
                         <td className="p-3 font-semibold tabular-nums text-[var(--title)]">
                           {r.y}
                         </td>
-
                         <td className="p-3 font-medium text-[var(--fg)]">
                           {r.n}
                         </td>
-
                         <td className="p-3">
                           <div className="flex items-center gap-3">
                             <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--tint)]">
@@ -395,13 +577,11 @@ export default async function Profile(props: {
                                 }}
                               />
                             </div>
-
                             <span className="w-14 text-right text-xs font-medium tabular-nums text-[var(--fg)]">
                               {r.hours.toFixed(1)} h
                             </span>
                           </div>
                         </td>
-
                         <td className="p-3 font-medium text-[var(--fg)]">
                           {r.maxDepth !== null ? `${r.maxDepth} m` : '—'}
                         </td>
@@ -413,7 +593,6 @@ export default async function Profile(props: {
             )}
           </section>
 
-          {/* CERTIFICACIONES */}
           <section
             id="certificaciones"
             className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl"
@@ -423,13 +602,12 @@ export default async function Profile(props: {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-lg text-[var(--accent-strong)]">
                   <Icon name="award" className="h-5 w-5" />
                 </div>
-
                 <div>
                   <h2 className="font-semibold text-[var(--title)]">
-                    Certificaciones y titulaciones
+                    {t.qualifications}
                   </h2>
                   <p className="mt-1 text-xs text-[var(--muted)]">
-                    Tus acreditaciones y cualificaciones profesionales.
+                    {t.qualificationsDescription}
                   </p>
                 </div>
               </div>
@@ -439,10 +617,10 @@ export default async function Profile(props: {
               {!certs?.length ? (
                 <div className="mb-5 rounded-xl border border-dashed border-[var(--line)] bg-[var(--tint)] p-5 text-center">
                   <p className="text-sm font-medium text-[var(--fg)]">
-                    Todavía no tienes certificaciones.
+                    {t.noCertifications}
                   </p>
                   <p className="mt-1 text-xs text-[var(--muted)]">
-                    Añade tus titulaciones para tenerlas organizadas en tu ficha.
+                    {t.addQualifications}
                   </p>
                 </div>
               ) : (
@@ -459,21 +637,17 @@ export default async function Profile(props: {
                           <div className="break-words font-semibold text-[var(--title)]">
                             {c.title}
                           </div>
-
                           <div className="mt-1 text-sm text-[var(--muted)]">
                             {c.issuer}
                           </div>
-
                           <div className="mt-2 space-y-1 text-xs text-[var(--muted)]">
-                            <p>Obtenida: {c.obtained_on}</p>
-
+                            <p>{t.obtained} {c.obtained_on}</p>
                             {c.expires_on && (
                               <p className={expired ? 'font-semibold text-red-600 dark:text-red-300' : ''}>
-                                Caducidad: {c.expires_on}
-                                {expired ? ' · CADUCADA' : ''}
+                                {t.expiry} {c.expires_on}
+                                {expired ? ` · ${t.expired}` : ''}
                               </p>
                             )}
-
                             {c.cert_number && (
                               <p>Nº {c.cert_number}</p>
                             )}
@@ -487,7 +661,7 @@ export default async function Profile(props: {
                             value={c.id}
                           />
                           <button className="rounded-lg border border-red-400/30 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-500/10 dark:text-red-300">
-                            Quitar
+                            {t.remove}
                           </button>
                         </form>
                       </li>
@@ -498,10 +672,10 @@ export default async function Profile(props: {
 
               <div className="mb-4 border-t border-[var(--line)] pt-5">
                 <h3 className="font-semibold text-[var(--title)]">
-                  Añadir certificación
+                  {t.addCertification}
                 </h3>
                 <p className="mt-1 text-xs text-[var(--muted)]">
-                  Introduce los datos que aparecen en tu acreditación.
+                  {t.addDescription}
                 </p>
               </div>
 
@@ -509,19 +683,17 @@ export default async function Profile(props: {
                 <input
                   name="title"
                   required
-                  placeholder="Titulación *"
+                  placeholder={t.titlePlaceholder}
                   className="input"
                 />
-
                 <input
                   name="issuer"
                   required
-                  placeholder="Organismo emisor *"
+                  placeholder={t.issuerPlaceholder}
                   className="input"
                 />
-
                 <label className="block text-xs font-medium text-[var(--muted)]">
-                  Fecha de obtención *
+                  {t.obtainedDate}
                   <input
                     name="obtained_on"
                     type="date"
@@ -529,25 +701,22 @@ export default async function Profile(props: {
                     className="input mt-2"
                   />
                 </label>
-
                 <label className="block text-xs font-medium text-[var(--muted)]">
-                  Caducidad (si existe)
+                  {t.expiryDate}
                   <input
                     name="expires_on"
                     type="date"
                     className="input mt-2"
                   />
                 </label>
-
                 <input
                   name="cert_number"
-                  placeholder="Nº de certificación (opcional)"
+                  placeholder={t.numberPlaceholder}
                   className="input"
                 />
-
                 <div>
                   <button className="btn inline-flex items-center justify-center gap-2">
-                    Añadir certificación
+                    {t.addCertification}
                     <span aria-hidden="true">+</span>
                   </button>
                 </div>
