@@ -2,10 +2,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { fetchAll, summarize } from '@/lib/filters'
 import Icon from '@/components/icon'
-import PasswordInput from '@/components/password-input'
 import { Msg } from '../../auth-shell'
 import { saveProfile, addCert, deleteCert } from './actions'
-import { changeOwnPassword } from '@/app/actions'
+import PasswordChange from './password-change'
 import PhotoUploader from './photo-uploader'
 
 const translations = {
@@ -386,72 +385,16 @@ export default async function Profile(props: {
             <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
               <PhotoUploader hasPhoto={!!photo} />
 
-              <details className="group relative">
-                <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--tint)] px-4 py-2.5 text-sm font-medium text-[var(--fg)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)]/10 [&::-webkit-details-marker]:hidden">
-                  <Icon name="lock" className="h-4 w-4" />
-                  {t.changePassword}
-                  <Icon
-                    name="chevron-down"
-                    className="h-4 w-4 transition-transform group-open:rotate-180"
-                  />
-                </summary>
-
-                <div className="absolute right-0 z-30 mt-3 w-[min(19rem,calc(100vw-3rem))] rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 text-left shadow-xl backdrop-blur-xl">
-                  <h3 className="font-semibold text-[var(--title)]">
-                    {t.passwordSection}
-                  </h3>
-
-                  <p className="mt-1 text-xs text-[var(--muted)]">
-                    {t.passwordDescription}
-                  </p>
-
-                  <form action={changeOwnPassword} className="mt-4 space-y-3">
-                    <label className="block text-sm">
-                      <span className="mb-2 block font-medium text-[var(--fg)]">
-                        {t.currentPassword}
-                      </span>
-                      <PasswordInput
-                        id="current_password"
-                        name="current_password"
-                        autoComplete="current-password"
-                        placeholder={t.passwordPlaceholder}
-                      />
-                    </label>
-
-                    <label className="block text-sm">
-                      <span className="mb-2 block font-medium text-[var(--fg)]">
-                        {t.newPassword}
-                      </span>
-                      <PasswordInput
-                        id="new_password"
-                        name="new_password"
-                        autoComplete="new-password"
-                        placeholder={t.passwordPlaceholder}
-                      />
-                    </label>
-
-                    <label className="block text-sm">
-                      <span className="mb-2 block font-medium text-[var(--fg)]">
-                        {t.confirmPassword}
-                      </span>
-                      <PasswordInput
-                        id="confirm_password"
-                        name="confirm_password"
-                        autoComplete="new-password"
-                        placeholder={t.passwordPlaceholder}
-                      />
-                    </label>
-
-                    <p className="text-xs text-[var(--muted)]">
-                      {t.passwordMinLength}
-                    </p>
-
-                    <button className="btn w-full">
-                      {t.changePassword} →
-                    </button>
-                  </form>
-                </div>
-              </details>
+              <PasswordChange
+                title={t.passwordSection}
+                description={t.passwordDescription}
+                currentPassword={t.currentPassword}
+                newPassword={t.newPassword}
+                confirmPassword={t.confirmPassword}
+                placeholder={t.passwordPlaceholder}
+                minLength={t.passwordMinLength}
+                buttonText={t.changePassword}
+              />
             </div>
 
             {!isAdmin && last?.status === 'pending' && (
