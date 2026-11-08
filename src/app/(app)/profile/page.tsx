@@ -2,8 +2,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { fetchAll, summarize } from '@/lib/filters'
 import Icon from '@/components/icon'
+import PasswordInput from '@/components/password-input'
 import { Msg } from '../../auth-shell'
 import { saveProfile, addCert, deleteCert } from './actions'
+import { changeOwnPassword } from '@/app/actions'
 import PhotoUploader from './photo-uploader'
 
 const translations = {
@@ -49,6 +51,14 @@ const translations = {
     organization: 'Centre formatiu o empresa',
     organizationPlaceholder: 'Nom de l’empresa o centre',
     save: 'Desar els canvis',
+    passwordSection: 'Seguretat i contrasenya',
+    passwordDescription: 'Actualitza la contrasenya del teu compte.',
+    currentPassword: 'Contrasenya actual',
+    newPassword: 'Contrasenya nova',
+    confirmPassword: 'Confirma la contrasenya nova',
+    passwordPlaceholder: 'Introdueix la contrasenya',
+    passwordMinLength: 'La contrasenya nova ha de tenir almenys 10 caràcters.',
+    changePassword: 'Canviar la contrasenya',
     yearlyEvolution: 'Evolució per anys',
     yearlyDescription: 'Immersions i hores acumulades cada any.',
     year: 'Any',
@@ -115,6 +125,14 @@ const translations = {
     organization: 'Centro formativo o empresa',
     organizationPlaceholder: 'Nombre de empresa o centro',
     save: 'Guardar cambios',
+    passwordSection: 'Seguridad y contraseña',
+    passwordDescription: 'Actualiza la contraseña de tu cuenta.',
+    currentPassword: 'Contraseña actual',
+    newPassword: 'Nueva contraseña',
+    confirmPassword: 'Confirma la nueva contraseña',
+    passwordPlaceholder: 'Introduce la contraseña',
+    passwordMinLength: 'La nueva contraseña debe tener al menos 10 caracteres.',
+    changePassword: 'Cambiar contraseña',
     yearlyEvolution: 'Evolución por años',
     yearlyDescription: 'Inmersiones y horas acumuladas cada año.',
     year: 'Año',
@@ -181,6 +199,14 @@ const translations = {
     organization: 'Training centre or company',
     organizationPlaceholder: 'Company or centre name',
     save: 'Save changes',
+    passwordSection: 'Security and password',
+    passwordDescription: 'Update your account password.',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm new password',
+    passwordPlaceholder: 'Enter your password',
+    passwordMinLength: 'Your new password must contain at least 10 characters.',
+    changePassword: 'Change password',
     yearlyEvolution: 'Yearly progress',
     yearlyDescription: 'Dives and accumulated hours each year.',
     year: 'Year',
@@ -217,7 +243,9 @@ export default async function Profile(props: {
     data: { user },
   } = await sb.auth.getUser()
 
-  const uid = user!.id
+  if (!user) return null
+
+  const uid = user.id
 
   const { data: p } = await sb
     .from('profiles')
@@ -516,6 +544,71 @@ export default async function Profile(props: {
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
+            </form>
+          </section>
+
+          <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
+            <div className="border-b border-[var(--line)] px-5 py-5 sm:px-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-lg text-[var(--accent-strong)]">
+                  <Icon name="lock" className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-[var(--title)]">
+                    {t.passwordSection}
+                  </h2>
+                  <p className="mt-1 text-xs text-[var(--muted)]">
+                    {t.passwordDescription}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <form action={changeOwnPassword} className="space-y-4 p-5 sm:p-6">
+              <label className="block text-sm">
+                <span className="mb-2 block font-medium text-[var(--fg)]">
+                  {t.currentPassword}
+                </span>
+                <PasswordInput
+                  id="current_password"
+                  name="current_password"
+                  autoComplete="current-password"
+                  placeholder={t.passwordPlaceholder}
+                />
+              </label>
+
+              <label className="block text-sm">
+                <span className="mb-2 block font-medium text-[var(--fg)]">
+                  {t.newPassword}
+                </span>
+                <PasswordInput
+                  id="new_password"
+                  name="new_password"
+                  autoComplete="new-password"
+                  placeholder={t.passwordPlaceholder}
+                />
+              </label>
+
+              <label className="block text-sm">
+                <span className="mb-2 block font-medium text-[var(--fg)]">
+                  {t.confirmPassword}
+                </span>
+                <PasswordInput
+                  id="confirm_password"
+                  name="confirm_password"
+                  autoComplete="new-password"
+                  placeholder={t.passwordPlaceholder}
+                />
+              </label>
+
+              <p className="text-xs text-[var(--muted)]">
+                {t.passwordMinLength}
+              </p>
+
+              <button className="btn inline-flex items-center justify-center gap-2">
+                {t.changePassword}
+                <span aria-hidden="true">→</span>
+              </button>
             </form>
           </section>
 
