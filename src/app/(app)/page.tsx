@@ -239,46 +239,46 @@ export default async function Dashboard(props: {
   ]
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-4 sm:space-y-8">
 
       {/* CABECERA PRINCIPAL */}
 
-      <section className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow)] backdrop-blur-xl sm:p-8">
+      <section className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-[var(--shadow)] backdrop-blur-xl sm:rounded-3xl sm:p-8">
         <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-[var(--g2)] opacity-10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-[var(--accent)] opacity-10 blur-3xl" />
 
-        <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+        <div className="relative flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-6">
           <div className="min-w-0">
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2 sm:mb-3">
               <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent)]" />
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--accent)]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)] sm:text-xs sm:tracking-[0.18em]">
                 {today}
               </p>
             </div>
 
-            <h1 className="text-3xl font-extrabold tracking-tight text-[var(--title)] sm:text-4xl">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--title)] sm:text-4xl">
               {t.greeting}, {first} <span>👋</span>
             </h1>
 
-            <p className="mt-3 max-w-lg text-sm leading-6 text-[var(--muted)] sm:text-base">
+            <p className="mt-2 max-w-lg text-xs leading-5 text-[var(--muted)] sm:mt-3 sm:text-base sm:leading-6">
               {t.intro}
             </p>
           </div>
 
           <Link
             href="/dives/new"
-            className="btn inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold shadow-lg transition hover:-translate-y-0.5"
+            className="btn inline-flex shrink-0 self-start items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-lg transition hover:-translate-y-0.5 sm:px-5 sm:py-3 sm:text-base"
           >
-            <Icon name="plus" className="h-5 w-5" />
+            <Icon name="plus" className="h-4 w-4 sm:h-5 sm:w-5" />
             {t.newDive}
           </Link>
         </div>
 
-        <div className="relative mt-7 flex flex-wrap gap-2 border-t border-[var(--line)] pt-5">
-          <span className="rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--accent)]">
+        <div className="relative mt-4 flex flex-wrap gap-2 border-t border-[var(--line)] pt-3 sm:mt-7 sm:pt-5">
+          <span className="rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/10 px-2.5 py-1 text-[10px] font-semibold text-[var(--accent)] sm:px-3 sm:py-1.5 sm:text-xs">
             LogBook · {t.tagline}
           </span>
-          <span className="rounded-full border border-[var(--line)] bg-[var(--tint)] px-3 py-1.5 text-xs font-medium text-[var(--muted)]">
+          <span className="rounded-full border border-[var(--line)] bg-[var(--tint)] px-2.5 py-1 text-[10px] font-medium text-[var(--muted)] sm:px-3 sm:py-1.5 sm:text-xs">
             {total.n} {t.registered}
           </span>
         </div>
@@ -289,17 +289,17 @@ export default async function Dashboard(props: {
       {soon.length > 0 && (
         <Link
           href="/profile#certificaciones"
-          className="group flex items-center gap-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 transition hover:bg-amber-400/15"
+          className="group flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3 transition hover:bg-amber-400/15 sm:gap-4 sm:p-4"
         >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-amber-400/15 text-amber-500">
-            <Icon name="award" className="h-5 w-5" />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-amber-400/15 text-amber-500 sm:h-11 sm:w-11">
+            <Icon name="award" className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
 
           <span className="min-w-0 flex-1">
-            <span className="block font-bold text-amber-600">
+            <span className="block text-sm font-bold text-amber-600 sm:text-base">
               {t.certifications}
             </span>
-            <span className="mt-1 block text-sm text-[var(--muted)]">
+            <span className="mt-1 block text-xs text-[var(--muted)] sm:text-sm">
               {soon.length} {soon.length === 1 ? t.certificationOne : t.certificationMany}
             </span>
           </span>
@@ -314,14 +314,14 @@ export default async function Dashboard(props: {
 
         /* ESTADO SIN INMERSIONES */
 
-        <section className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-8 text-center shadow-[var(--shadow)] backdrop-blur-xl sm:p-12">
+        <section className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 text-center shadow-[var(--shadow)] backdrop-blur-xl sm:rounded-3xl sm:p-12">
           <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[var(--g2)] opacity-10 blur-3xl" />
 
-          <div className="relative mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-[var(--accent)]">
-            <Icon name="plus" className="h-9 w-9" />
+          <div className="relative mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-[var(--accent)] sm:mb-6 sm:h-20 sm:w-20 sm:rounded-3xl">
+            <Icon name="plus" className="h-8 w-8 sm:h-9 sm:w-9" />
           </div>
 
-          <h2 className="relative text-2xl font-extrabold text-[var(--title)]">
+          <h2 className="relative text-xl font-extrabold text-[var(--title)] sm:text-2xl">
             {t.emptyTitle}
           </h2>
 
@@ -329,7 +329,7 @@ export default async function Dashboard(props: {
             {t.emptyText}
           </p>
 
-          <Link href="/dives/new" className="btn relative mt-7 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold">
+          <Link href="/dives/new" className="btn relative mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold sm:mt-7 sm:px-6 sm:py-3 sm:text-base">
             <Icon name="plus" className="h-5 w-5" />
             {t.firstDive}
           </Link>
@@ -341,45 +341,45 @@ export default async function Dashboard(props: {
           {/* ESTADÍSTICAS */}
 
           <section>
-            <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)] sm:text-xs">
                   {t.history}
                 </p>
-                <h2 className="mt-1 text-xl font-extrabold text-[var(--title)]">
+                <h2 className="mt-1 text-lg font-extrabold text-[var(--title)] sm:text-xl">
                   {t.general}
                 </h2>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 2xl:grid-cols-4">
               {stats.map(([label, value, subtitle, icon]) => (
                 <article
                   key={label}
-                  className="group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40"
+                  className="group relative min-w-0 overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] p-3 shadow-[var(--shadow)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 sm:rounded-2xl sm:p-5"
                 >
                   <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[var(--accent)] opacity-[0.07] blur-2xl transition group-hover:opacity-20" />
 
-                  <div className="relative flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-[var(--muted)]">
+                  <div className="relative flex min-w-0 items-center justify-between gap-1 sm:gap-3">
+                    <span className="min-w-0 text-xs font-semibold leading-4 text-[var(--muted)] sm:text-sm">
                       {label}
                     </span>
 
-                    <span className="grid h-11 w-11 place-items-center rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-[var(--accent)] transition group-hover:scale-105">
-                      <Icon name={icon} className="h-5 w-5" />
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-[var(--accent)] transition group-hover:scale-105 sm:h-11 sm:w-11 sm:rounded-xl">
+                      <Icon name={icon} className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
                   </div>
 
-                  <div className="relative mt-5">
-                    <p className="break-words text-3xl font-extrabold tracking-tight text-[var(--title)] sm:text-4xl">
+                  <div className="relative mt-3 min-w-0 sm:mt-5">
+                    <p className="break-words text-xl font-extrabold tracking-tight text-[var(--title)] sm:text-3xl 2xl:text-4xl">
                       {value}
                     </p>
-                    <p className="mt-2 text-xs font-medium text-[var(--muted)]">
+                    <p className="mt-1 break-words text-[10px] font-medium leading-4 text-[var(--muted)] sm:mt-2 sm:text-xs">
                       {subtitle}
                     </p>
                   </div>
 
-                  <div className="absolute bottom-0 left-5 right-5 h-[2px] rounded-full bg-gradient-to-r from-[var(--g1)] to-[var(--g2)] opacity-60 transition group-hover:opacity-100" />
+                  <div className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-gradient-to-r from-[var(--g1)] to-[var(--g2)] opacity-60 transition group-hover:opacity-100 sm:left-5 sm:right-5" />
                 </article>
               ))}
             </div>
@@ -387,26 +387,26 @@ export default async function Dashboard(props: {
 
           {/* ACTIVIDAD ANUAL */}
 
-          <section className="overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow)] backdrop-blur-xl sm:p-7">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+          <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 shadow-[var(--shadow)] backdrop-blur-xl sm:rounded-3xl sm:p-7">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start sm:gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)] sm:text-xs">
                   {t.statistics}
                 </p>
-                <h2 className="mt-1 text-xl font-extrabold text-[var(--title)] sm:text-2xl">
+                <h2 className="mt-1 text-lg font-extrabold text-[var(--title)] sm:text-2xl">
                   {t.activity} {year}
                 </h2>
-                <p className="mt-2 text-sm text-[var(--muted)]">
+                <p className="mt-1 text-xs text-[var(--muted)] sm:mt-2 sm:text-sm">
                   {t.evolution}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {years.map((a) => (
                   <Link
                     key={a}
                     href={`/?year=${a}`}
-                    className={`rounded-xl border px-3 py-2 text-sm font-bold transition ${
+                    className={`rounded-lg border px-2.5 py-1.5 text-xs font-bold transition sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm ${
                       a === year
                         ? 'border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] shadow-sm'
                         : 'border-[var(--line)] bg-[var(--tint)] text-[var(--muted)] hover:border-[var(--accent)]/30 hover:text-[var(--title)]'
@@ -420,30 +420,30 @@ export default async function Dashboard(props: {
 
             {/* RESUMEN DEL AÑO */}
 
-            <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4">
-                <p className="text-xs font-semibold text-[var(--muted)]">
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-7 sm:grid-cols-3 sm:gap-3">
+              <div className="rounded-xl border border-[var(--line)] bg-[var(--tint)] p-3 sm:rounded-2xl sm:p-4">
+                <p className="text-[10px] font-semibold text-[var(--muted)] sm:text-xs">
                   {t.dives}
                 </p>
-                <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
+                <p className="mt-1 text-xl font-extrabold text-[var(--title)] sm:mt-2 sm:text-2xl">
                   {y.n}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4">
-                <p className="text-xs font-semibold text-[var(--muted)]">
+              <div className="rounded-xl border border-[var(--line)] bg-[var(--tint)] p-3 sm:rounded-2xl sm:p-4">
+                <p className="text-[10px] font-semibold text-[var(--muted)] sm:text-xs">
                   {t.hours}
                 </p>
-                <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
+                <p className="mt-1 text-xl font-extrabold text-[var(--title)] sm:mt-2 sm:text-2xl">
                   {y.hours.toFixed(1)} <span className="text-sm">h</span>
                 </p>
               </div>
 
-              <div className="col-span-2 rounded-2xl border border-[var(--line)] bg-[var(--tint)] p-4 sm:col-span-1">
-                <p className="text-xs font-semibold text-[var(--muted)]">
+              <div className="col-span-2 rounded-xl border border-[var(--line)] bg-[var(--tint)] p-3 sm:col-span-1 sm:rounded-2xl sm:p-4">
+                <p className="text-[10px] font-semibold text-[var(--muted)] sm:text-xs">
                   {t.maxDepth}
                 </p>
-                <p className="mt-2 text-2xl font-extrabold text-[var(--title)]">
+                <p className="mt-1 text-xl font-extrabold text-[var(--title)] sm:mt-2 sm:text-2xl">
                   {y.maxDepth !== null ? `${y.maxDepth} m` : '—'}
                 </p>
               </div>
@@ -451,8 +451,8 @@ export default async function Dashboard(props: {
 
             {/* GRÁFICO */}
 
-            <div className="mt-8">
-              <div className="flex h-48 items-end gap-2 border-b border-[var(--line)] pb-1 sm:gap-3">
+            <div className="mt-6 sm:mt-8">
+              <div className="flex h-36 items-end gap-1 border-b border-[var(--line)] pb-1 sm:h-48 sm:gap-3">
                 {m.map((x, i) => {
                   const height = x.n ? Math.max((x.n / top) * 100, 8) : 2
 
@@ -463,13 +463,13 @@ export default async function Dashboard(props: {
                       title={`${t.months[i]}: ${x.n} ${t.dives.toLowerCase()}, ${x.hours.toFixed(1)} h`}
                       className="group flex h-full min-w-0 flex-1 flex-col items-center justify-end"
                     >
-                      <span className="mb-2 text-xs font-bold text-[var(--accent)] opacity-0 transition group-hover:opacity-100">
+                      <span className="mb-1 text-xs font-bold text-[var(--accent)] opacity-0 transition group-hover:opacity-100 sm:mb-2">
                         {x.n || ''}
                       </span>
 
                       <div className="flex h-full w-full items-end justify-center">
                         <div
-                          className="w-full max-w-10 rounded-t-lg transition-all duration-300 group-hover:brightness-125"
+                          className="w-full max-w-10 rounded-t-md transition-all duration-300 group-hover:brightness-125 sm:rounded-t-lg"
                           style={{
                             height: `${height}%`,
                             minHeight: x.n ? '8px' : '3px',
@@ -481,7 +481,7 @@ export default async function Dashboard(props: {
                         />
                       </div>
 
-                      <span className="mt-3 text-[10px] font-semibold text-[var(--muted)] sm:text-xs">
+                      <span className="mt-2 text-[9px] font-semibold text-[var(--muted)] sm:mt-3 sm:text-xs">
                         {t.months[i].slice(0, 3)}
                       </span>
                     </Link>
@@ -490,30 +490,30 @@ export default async function Dashboard(props: {
               </div>
             </div>
 
-            <p className="mt-4 text-center text-xs text-[var(--muted)]">
+            <p className="mt-3 text-center text-[10px] text-[var(--muted)] sm:mt-4 sm:text-xs">
               {t.selectMonth}
             </p>
           </section>
 
           {/* ÚLTIMAS INMERSIONES */}
 
-          <section className="overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--line)] p-5 sm:p-6">
+          <section className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow)] backdrop-blur-xl sm:rounded-3xl">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--line)] p-4 sm:gap-3 sm:p-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)] sm:text-xs">
                   {t.recentActivity}
                 </p>
-                <h2 className="mt-1 text-xl font-extrabold text-[var(--title)]">
+                <h2 className="mt-1 text-lg font-extrabold text-[var(--title)] sm:text-xl">
                   {t.latestDives}
                 </h2>
-                <p className="mt-1 text-sm text-[var(--muted)]">
+                <p className="mt-1 text-xs text-[var(--muted)] sm:text-sm">
                   {t.fiveRecent}
                 </p>
               </div>
 
               <Link
                 href="/dives"
-                className="rounded-xl border border-[var(--line)] bg-[var(--tint)] px-4 py-2.5 text-sm font-bold text-[var(--accent)] transition hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+                className="rounded-lg border border-[var(--line)] bg-[var(--tint)] px-3 py-2 text-xs font-bold text-[var(--accent)] transition hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/10 sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
               >
                 {t.seeAll} →
               </Link>
@@ -524,26 +524,26 @@ export default async function Dashboard(props: {
                 <li key={d.id}>
                   <Link
                     href={`/dives/${d.id}?from=%2F`}
-                    className="group flex items-center gap-3 px-5 py-4 transition hover:bg-[var(--tint)] sm:gap-4 sm:px-6"
+                    className="group flex items-center gap-2 px-3 py-3 transition hover:bg-[var(--tint)] sm:gap-4 sm:px-6 sm:py-4"
                   >
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-sm font-extrabold text-[var(--accent)] transition group-hover:scale-105">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-xs font-extrabold text-[var(--accent)] transition group-hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl sm:text-sm">
                       {d.dive_number}
                     </span>
 
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-bold text-[var(--title)] transition group-hover:text-[var(--accent)]">
+                      <span className="block truncate text-sm font-bold text-[var(--title)] transition group-hover:text-[var(--accent)] sm:text-base">
                         {d.site || t.unknownLocation}
                       </span>
-                      <span className="mt-1 block text-xs text-[var(--muted)]">
+                      <span className="mt-1 block text-[10px] text-[var(--muted)] sm:text-xs">
                         {formatDate(d.dive_date)}
                       </span>
                     </span>
 
                     <span className="shrink-0 text-right">
-                      <span className="block font-extrabold text-[var(--title)]">
+                      <span className="block text-sm font-extrabold text-[var(--title)] sm:text-base">
                         {d.max_depth_m ?? '—'} m
                       </span>
-                      <span className="mt-1 block text-xs text-[var(--muted)]">
+                      <span className="mt-1 block text-[10px] text-[var(--muted)] sm:text-xs">
                         {d.duration_min ?? '—'} min
                       </span>
                     </span>
@@ -556,10 +556,10 @@ export default async function Dashboard(props: {
               ))}
             </ul>
 
-            <div className="border-t border-[var(--line)] p-4 text-center sm:hidden">
+            <div className="border-t border-[var(--line)] p-3 text-center sm:hidden">
               <Link
                 href="/dives"
-                className="text-sm font-bold text-[var(--accent)]"
+                className="text-xs font-bold text-[var(--accent)]"
               >
                 {t.seeAllDives} →
               </Link>
