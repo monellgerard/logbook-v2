@@ -316,32 +316,33 @@ export default async function Dives(props: {
   const total = count ?? 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
 
       {/* CABECERA */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/65 p-6 shadow-xl backdrop-blur-xl dark:bg-slate-950/40 sm:p-8">
+
+      <section className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/65 p-4 shadow-xl backdrop-blur-xl dark:bg-slate-950/40 sm:rounded-3xl sm:p-8">
         <div className="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 right-1/3 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />
 
-        <div className="relative flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-          <div>
-            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-teal-700 dark:text-cyan-300">
+        <div className="relative flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-5">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-teal-700 dark:text-cyan-300 sm:text-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
               {t.activity}
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-navy dark:text-white sm:text-4xl">
+            <h1 className="text-2xl font-bold tracking-tight text-navy dark:text-white sm:text-4xl">
               {t.title}
             </h1>
 
-            <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-300">
+            <p className="mt-2 max-w-xl text-xs text-slate-600 dark:text-slate-300 sm:text-sm">
               {t.description}
             </p>
           </div>
 
           <Link
             href="/dives/new"
-            className="btn inline-flex shrink-0 items-center justify-center gap-2 self-start sm:self-auto"
+            className="btn inline-flex shrink-0 items-center justify-center gap-2 self-start text-sm sm:self-auto sm:text-base"
           >
             <span className="text-lg leading-none">+</span>
             {t.newDive}
@@ -349,269 +350,15 @@ export default async function Dives(props: {
         </div>
       </section>
 
-      {/* RESUMEN */}
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {/* HISTORIAL */}
 
-        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              {filtered ? t.foundDives : t.totalDives}
-            </p>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-xl text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
-              ◉
-            </span>
-          </div>
+      <section className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40 sm:rounded-3xl">
 
-          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
-            {total}
-          </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            {t.records} {filtered ? t.currentFilters : t.inBook}
-          </p>
-        </div>
+        {/* CABECERA DEL HISTORIAL */}
 
-        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              {t.underwaterTime}
-            </p>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 text-xl text-teal-700 dark:bg-teal-400/15 dark:text-teal-300">
-              ◷
-            </span>
-          </div>
-
-          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
-            {(mins / 60).toFixed(1)}
-            <span className="ml-1 text-base font-semibold text-slate-500">h</span>
-          </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            {t.accumulatedHours} {filtered ? t.thisSelection : t.registered}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-white/30 bg-white/70 p-5 shadow-sm backdrop-blur-xl dark:bg-slate-950/35">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              {t.searchStatus}
-            </p>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-xl text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">
-              ⌕
-            </span>
-          </div>
-
-          <p className="mt-3 text-3xl font-bold tracking-tight text-navy dark:text-white">
-            {activeFilterCount}
-          </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            {t.activeFilters}
-          </p>
-        </div>
-      </section>
-
-      {/* FILTROS */}
-      <details
-        open={filtered}
-        className="group overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40"
-      >
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 transition hover:bg-white/40 dark:hover:bg-white/5 [&::-webkit-details-marker]:hidden sm:p-5">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="21"
-                height="21"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 7h16" />
-                <path d="M7 12h10" />
-                <path d="M10 17h4" />
-              </svg>
-            </span>
-
-            <div className="min-w-0">
-              <p className="font-semibold text-navy dark:text-white">
-                {t.filterDives}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t.filterDescription}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-3">
-            {filtered && (
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
-                {activeFilterCount} {t.active}
-              </span>
-            )}
-
-            <span className="text-xl text-slate-500 transition-transform group-open:rotate-180">
-              ⌄
-            </span>
-          </div>
-        </summary>
-
-        <div className="border-t border-slate-200/70 p-4 dark:border-white/10 sm:p-5">
-          <form
-            action="/dives"
-            method="GET"
-            key={JSON.stringify(sp)}
-            className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4"
-          >
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.year}
-              </span>
-              <select name="year" defaultValue={sp.year ?? ''} className="input w-full">
-                <option value="">{t.allYears}</option>
-                {years.map((a) => (
-                  <option key={a} value={a}>{a}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.month}
-              </span>
-              <select name="month" defaultValue={sp.month ?? ''} className="input w-full">
-                <option value="">{t.allMonths}</option>
-                {MONTHS.map((m, i) => (
-                  <option key={m} value={i + 1}>{t.months[i]}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.from}
-              </span>
-              <input
-                name="from"
-                type="date"
-                defaultValue={sp.from}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.to}
-              </span>
-              <input
-                name="to"
-                type="date"
-                defaultValue={sp.to}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.place}
-              </span>
-              <input
-                name="site"
-                placeholder={t.searchLocation}
-                defaultValue={sp.site}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.workType}
-              </span>
-              <input
-                name="work"
-                placeholder={t.searchWork}
-                defaultValue={sp.work}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.minDepth}
-              </span>
-              <input
-                name="min_depth"
-                type="number"
-                min={0}
-                placeholder={t.example}
-                defaultValue={sp.min_depth}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.maxDepth}
-              </span>
-              <input
-                name="max_depth"
-                type="number"
-                min={0}
-                placeholder={t.exampleMax}
-                defaultValue={sp.max_depth}
-                className="input w-full"
-              />
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.gasMix}
-              </span>
-              <select name="gas_mix" defaultValue={sp.gas_mix ?? ''} className="input w-full">
-                <option value="">{t.allGases}</option>
-                {OPT.gas_mix.map(([a, b]) => (
-                  <option key={a} value={a}>{b}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="space-y-1">
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                {t.minRating}
-              </span>
-              <input
-                name="min_rating"
-                type="number"
-                min={1}
-                max={10}
-                placeholder={t.ratingRange}
-                defaultValue={sp.min_rating}
-                className="input w-full"
-              />
-            </label>
-
-            <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
-              <button type="submit" className="btn">
-                {t.applyFilters}
-              </button>
-
-              <Link
-                href="/dives"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-300/70 px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
-              >
-                {t.clearFilters}
-              </Link>
-            </div>
-          </form>
-        </div>
-      </details>
-
-      {/* TABLA E HISTORIAL */}
-      <section className="overflow-hidden rounded-2xl border border-white/30 bg-white/70 shadow-sm backdrop-blur-xl dark:bg-slate-950/40">
-
-        <div className="flex flex-col justify-between gap-3 border-b border-slate-200/70 p-4 dark:border-white/10 sm:flex-row sm:items-center sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 p-4 dark:border-white/10 sm:p-5">
           <div>
-            <h2 className="font-bold text-navy dark:text-white">
+            <h2 className="text-lg font-bold text-navy dark:text-white sm:text-xl">
               {t.history}
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -621,7 +368,7 @@ export default async function Dives(props: {
 
           <a
             href={exp}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-teal-600/25 bg-teal-500/10 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-500/20 dark:text-teal-300"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-teal-600/25 bg-teal-500/10 px-3 py-2 text-xs font-semibold text-teal-800 transition hover:bg-teal-500/20 dark:text-teal-300 sm:px-4 sm:text-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -642,13 +389,246 @@ export default async function Dives(props: {
           </a>
         </div>
 
+        {/* RESUMEN COMPACTO */}
+
+        <div className="grid grid-cols-3 divide-x divide-slate-200/70 border-b border-slate-200/70 bg-slate-50/50 px-2 py-3 dark:divide-white/10 dark:border-white/10 dark:bg-white/[0.02] sm:px-5 sm:py-4">
+          <div className="min-w-0 px-1 text-center sm:px-3">
+            <p className="text-lg font-extrabold tracking-tight text-navy dark:text-white sm:text-2xl">
+              {total}
+            </p>
+            <p className="text-[10px] leading-4 text-slate-500 dark:text-slate-400 sm:text-xs">
+              {filtered ? t.foundDives : t.totalDives}
+            </p>
+          </div>
+
+          <div className="min-w-0 px-1 text-center sm:px-3">
+            <p className="text-lg font-extrabold tracking-tight text-navy dark:text-white sm:text-2xl">
+              {(mins / 60).toFixed(1)}
+              <span className="ml-1 text-xs font-semibold text-slate-500">h</span>
+            </p>
+            <p className="text-[10px] leading-4 text-slate-500 dark:text-slate-400 sm:text-xs">
+              {t.underwaterTime}
+            </p>
+          </div>
+
+          <div className="min-w-0 px-1 text-center sm:px-3">
+            <p className="text-lg font-extrabold tracking-tight text-navy dark:text-white sm:text-2xl">
+              {activeFilterCount}
+            </p>
+            <p className="text-[10px] leading-4 text-slate-500 dark:text-slate-400 sm:text-xs">
+              {t.activeFilters}
+            </p>
+          </div>
+        </div>
+
+        {/* FILTROS PLEGABLES */}
+
+        <details
+          open={filtered}
+          className="group border-b border-slate-200/70 dark:border-white/10"
+        >
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 transition hover:bg-slate-50/70 dark:hover:bg-white/5 [&::-webkit-details-marker]:hidden sm:p-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 7h16" />
+                  <path d="M7 12h10" />
+                  <path d="M10 17h4" />
+                </svg>
+              </span>
+
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-navy dark:text-white">
+                  {t.filterDives}
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">
+                  {t.filterDescription}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-2">
+              {filtered && (
+                <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-semibold text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300 sm:text-xs">
+                  {activeFilterCount} {t.active}
+                </span>
+              )}
+
+              <span className="text-lg text-slate-500 transition-transform group-open:rotate-180">
+                ⌄
+              </span>
+            </div>
+          </summary>
+
+          <div className="border-t border-slate-200/70 p-3 dark:border-white/10 sm:p-5">
+            <form
+              action="/dives"
+              method="GET"
+              key={JSON.stringify(sp)}
+              className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4"
+            >
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.year}
+                </span>
+                <select name="year" defaultValue={sp.year ?? ''} className="input w-full">
+                  <option value="">{t.allYears}</option>
+                  {years.map((a) => (
+                    <option key={a} value={a}>{a}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.month}
+                </span>
+                <select name="month" defaultValue={sp.month ?? ''} className="input w-full">
+                  <option value="">{t.allMonths}</option>
+                  {MONTHS.map((m, i) => (
+                    <option key={m} value={i + 1}>{t.months[i]}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.from}
+                </span>
+                <input
+                  name="from"
+                  type="date"
+                  defaultValue={sp.from}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.to}
+                </span>
+                <input
+                  name="to"
+                  type="date"
+                  defaultValue={sp.to}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.place}
+                </span>
+                <input
+                  name="site"
+                  placeholder={t.searchLocation}
+                  defaultValue={sp.site}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.workType}
+                </span>
+                <input
+                  name="work"
+                  placeholder={t.searchWork}
+                  defaultValue={sp.work}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.minDepth}
+                </span>
+                <input
+                  name="min_depth"
+                  type="number"
+                  min={0}
+                  placeholder={t.example}
+                  defaultValue={sp.min_depth}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.maxDepth}
+                </span>
+                <input
+                  name="max_depth"
+                  type="number"
+                  min={0}
+                  placeholder={t.exampleMax}
+                  defaultValue={sp.max_depth}
+                  className="input w-full"
+                />
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.gasMix}
+                </span>
+                <select name="gas_mix" defaultValue={sp.gas_mix ?? ''} className="input w-full">
+                  <option value="">{t.allGases}</option>
+                  {OPT.gas_mix.map(([a, b]) => (
+                    <option key={a} value={a}>{b}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="space-y-1">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                  {t.minRating}
+                </span>
+                <input
+                  name="min_rating"
+                  type="number"
+                  min={1}
+                  max={10}
+                  placeholder={t.ratingRange}
+                  defaultValue={sp.min_rating}
+                  className="input w-full"
+                />
+              </label>
+
+              <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
+                <button type="submit" className="btn">
+                  {t.applyFilters}
+                </button>
+
+                <Link
+                  href="/dives"
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-300/70 px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
+                >
+                  {t.clearFilters}
+                </Link>
+              </div>
+            </form>
+          </div>
+        </details>
+
+        {/* RESULTADOS */}
+
         {!data?.length ? (
-          <div className="px-5 py-16 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300">
+          <div className="px-5 py-12 text-center sm:py-16">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl text-blue-700 dark:bg-blue-400/15 dark:text-cyan-300 sm:h-16 sm:w-16">
               ◉
             </div>
 
-            <h3 className="mt-5 text-lg font-bold text-navy dark:text-white">
+            <h3 className="mt-4 text-lg font-bold text-navy dark:text-white">
               {filtered ? t.noResults : t.emptyBook}
             </h3>
 
@@ -668,7 +648,55 @@ export default async function Dives(props: {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            {/* LISTA PARA MÓVIL */}
+
+            <div className="divide-y divide-slate-200/70 dark:divide-white/10 md:hidden">
+              {data.map((d: any) => (
+                <Link
+                  key={d.id}
+                  href={`/dives/${d.id}?from=${encodeURIComponent(q({}))}`}
+                  className="flex items-center gap-3 px-3 py-3 transition hover:bg-blue-50/60 dark:hover:bg-white/5"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-teal-600/15 bg-teal-500/10 text-xs font-extrabold text-teal-800 dark:text-cyan-300">
+                    #{d.dive_number}
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-1">
+                      <span className="truncate text-sm font-bold text-navy dark:text-white">
+                        {d.site || '—'}
+                      </span>
+                      {d.modified_since_review && (
+                        <span className="shrink-0 text-xs text-amber-600" title={t.modified}>
+                          ✎
+                        </span>
+                      )}
+                    </span>
+
+                    <span className="mt-1 block text-[10px] text-slate-500 dark:text-slate-400">
+                      {formatDate(d.dive_date, t.dateLocale)}
+                      {d.work_task ? ` · ${d.work_task.slice(0, 30)}` : ''}
+                    </span>
+                  </span>
+
+                  <span className="shrink-0 text-right">
+                    <span className="block text-sm font-bold text-navy dark:text-white">
+                      {d.max_depth_m != null ? `${d.max_depth_m} m` : '—'}
+                    </span>
+                    <span className="mt-1 block text-[10px] text-slate-500 dark:text-slate-400">
+                      {d.duration_min != null ? `${d.duration_min} min` : '—'}
+                      {d.rating != null ? ` · ${d.rating}/10` : ''}
+                    </span>
+                  </span>
+
+                  <span className="shrink-0 text-sm text-slate-400">›</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* TABLA COMPLETA PARA ESCRITORIO */}
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[850px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200/70 bg-slate-100/70 text-xs uppercase tracking-wide text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
@@ -772,8 +800,9 @@ export default async function Dives(props: {
             </div>
 
             {/* PAGINACIÓN */}
-            <div className="flex flex-col gap-3 border-t border-slate-200/70 p-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+
+            <div className="flex flex-col gap-3 border-t border-slate-200/70 p-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">
                 {t.showing} {data.length} {t.of} {total} {t.dives}
               </p>
 
@@ -781,29 +810,29 @@ export default async function Dives(props: {
                 {page > 1 ? (
                   <Link
                     href={q({ page: page - 1 })}
-                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
+                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10 sm:text-sm"
                   >
                     {t.previous}
                   </Link>
                 ) : (
-                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-sm text-slate-400 dark:border-white/5">
+                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-xs text-slate-400 dark:border-white/5 sm:text-sm">
                     {t.previous}
                   </span>
                 )}
 
-                <span className="rounded-xl bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800 dark:bg-blue-400/15 dark:text-cyan-300">
+                <span className="rounded-xl bg-blue-100 px-3 py-2 text-xs font-semibold text-blue-800 dark:bg-blue-400/15 dark:text-cyan-300 sm:px-4 sm:text-sm">
                   {page} / {pages}
                 </span>
 
                 {page < pages ? (
                   <Link
                     href={q({ page: page + 1 })}
-                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10"
+                    className="rounded-xl border border-slate-300/70 px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/10 sm:text-sm"
                   >
                     {t.next}
                   </Link>
                 ) : (
-                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-sm text-slate-400 dark:border-white/5">
+                  <span className="rounded-xl border border-slate-200/50 px-3 py-2 text-xs text-slate-400 dark:border-white/5 sm:text-sm">
                     {t.next}
                   </span>
                 )}
