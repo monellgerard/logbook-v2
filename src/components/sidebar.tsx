@@ -201,7 +201,7 @@ export default function Sidebar({
             onClick={toggle}
             aria-label={isCollapsed ? t.expand : t.collapse}
             title={isCollapsed ? t.expand : t.collapse}
-            className={`nav-mini hidden shrink-0 place-items-center md:grid ${
+            className={`nav-mini !hidden shrink-0 place-items-center md:!grid ${
               isCollapsed ? '' : 'ml-auto'
             }`}
           >
