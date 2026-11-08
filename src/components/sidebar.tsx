@@ -20,27 +20,27 @@ export type NavItem = {
 const translations = {
   ca: {
     openMenu: 'Obrir menú',
+    closeMenu: 'Tancar menú',
     expand: 'Expandir menú',
     collapse: 'Reduir menú',
-    newDive: 'Nova immersió',
     language: 'Idioma',
     signOut: 'Tancar sessió',
     saveError: 'No s’ha pogut desar l’idioma. Torna-ho a provar.',
   },
   es: {
     openMenu: 'Abrir menú',
+    closeMenu: 'Cerrar menú',
     expand: 'Expandir menú',
     collapse: 'Contraer menú',
-    newDive: 'Nueva inmersión',
     language: 'Idioma',
     signOut: 'Cerrar sesión',
     saveError: 'No se pudo guardar el idioma. Inténtalo de nuevo.',
   },
   en: {
     openMenu: 'Open menu',
+    closeMenu: 'Close menu',
     expand: 'Expand menu',
     collapse: 'Collapse menu',
-    newDive: 'New dive',
     language: 'Language',
     signOut: 'Sign out',
     saveError: 'Could not save the language. Please try again.',
@@ -63,19 +63,47 @@ export default function Sidebar({
   const path = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [open, setOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   const t =
     translations[language as keyof typeof translations] || translations.ca
 
+  // Detectar si estamos en móvil
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)')
+
+    const update = () => setIsMobile(media.matches)
+
+    update()
+    media.addEventListener('change', update)
+
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  // Recuperar el estado contraído del escritorio
   useEffect(() => {
     try {
       setCollapsed(localStorage.getItem('sidebar') === '1')
     } catch {}
   }, [])
 
+  // Cerrar el menú al cambiar de página
   useEffect(() => {
     setOpen(false)
   }, [path])
+
+  // Cerrar con Escape
+  useEffect(() => {
+    if (!open) return
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    window.addEventListener('keydown', handleEscape)
+
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [open])
 
   const toggle = () => {
     setCollapsed((current) => {
@@ -86,6 +114,9 @@ export default function Sidebar({
       return next
     })
   }
+
+  // En móvil el menú siempre se muestra expandido
+  const isCollapsed = !isMobile && collapsed
 
   const best =
     path === '/dives/new'
@@ -109,11 +140,13 @@ export default function Sidebar({
 
   return (
     <>
+      {/* Cabecera móvil */}
       <header className="side-mobile fixed inset-x-3 top-3 z-30 flex h-14 items-center gap-3 px-4 md:hidden">
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t.openMenu}
+          aria-expanded={open}
           className="nav-mini"
         >
           <Icon name="menu" className="h-5 w-5" />
@@ -121,28 +154,24 @@ export default function Sidebar({
 
         <Logo size={34} />
         <span className="text-lg font-bold tracking-tight">LogBook</span>
-
-        <Link
-          href="/dives/new"
-          className="btn ml-auto !px-4 !py-2 text-sm"
-        >
-          + {t.newDive}
-        </Link>
       </header>
 
+      {/* Fondo oscuro al abrir el menú */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm md:hidden"
           onClick={() => setOpen(false)}
+          aria-hidden="true"
         />
       )}
 
+      {/* Menú lateral */}
       <aside
-        data-collapsed={collapsed}
+        data-collapsed={isCollapsed}
         style={{
-          width: collapsed ? '84px' : '288px',
-          minWidth: collapsed ? '84px' : '288px',
-          maxWidth: collapsed ? '84px' : '288px',
+          width: isCollapsed ? '84px' : '288px',
+          minWidth: isCollapsed ? '84px' : '288px',
+          maxWidth: isCollapsed ? '84px' : '288px',
           flexShrink: 0,
           boxSizing: 'border-box',
         }}
@@ -150,50 +179,58 @@ export default function Sidebar({
           open ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        {/* Logo y control de anchura */}
+        {/* Cabecera del menú */}
         <div
           className={`sidebar-header flex items-center ${
-            collapsed
+            isCollapsed
               ? 'flex-col justify-center gap-2 px-2 pb-3 pt-4'
               : 'gap-3 px-4 pb-2 pt-5'
           }`}
         >
-          <Logo size={collapsed ? 38 : 46} />
+          <Logo size={isCollapsed ? 38 : 46} />
 
-          {!collapsed && (
+          {!isCollapsed && (
             <span className="text-xl font-extrabold tracking-tight">
               LogBook
             </span>
           )}
 
+          {/* Contraer escritorio */}
           <button
             type="button"
             onClick={toggle}
-            aria-label={collapsed ? t.expand : t.collapse}
-            title={collapsed ? t.expand : t.collapse}
+            aria-label={isCollapsed ? t.expand : t.collapse}
+            title={isCollapsed ? t.expand : t.collapse}
             className={`nav-mini hidden shrink-0 place-items-center md:grid ${
-              collapsed ? '' : 'ml-auto'
+              isCollapsed ? '' : 'ml-auto'
             }`}
           >
             <Icon
-              name={collapsed ? 'right' : 'left'}
+              name={isCollapsed ? 'right' : 'left'}
               className="h-4 w-4"
             />
           </button>
-        </div>
 
-        {/* Nueva inmersión */}
-       
+          {/* Cerrar móvil */}
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label={t.closeMenu}
+            className="nav-mini ml-auto grid shrink-0 place-items-center md:hidden"
+          >
+            <Icon name="close" className="h-5 w-5" />
+          </button>
+        </div>
 
         {/* Navegación */}
         <nav
           className={`sidebar-nav min-h-0 flex-1 overflow-y-auto pb-2 ${
-            collapsed ? 'px-2' : 'px-3'
+            isCollapsed ? 'px-2' : 'px-3'
           }`}
         >
           {groups.map((g) => (
             <div key={g} className="mb-3">
-              {!collapsed && g !== items[0]?.group && (
+              {!isCollapsed && g !== items[0]?.group && (
                 <p className="eyebrow mb-1.5 mt-3 px-3">
                   {g}
                 </p>
@@ -208,14 +245,14 @@ export default function Sidebar({
                     title={i.label}
                     data-active={i.href === best}
                     className={`nav-btn ${
-                      collapsed ? '!justify-center !px-2' : ''
+                      isCollapsed ? '!justify-center !px-2' : ''
                     }`}
                   >
                     <Icon
                       name={i.icon}
                       className="h-5 w-5 shrink-0"
                     />
-                    {!collapsed && (
+                    {!isCollapsed && (
                       <span className="truncate">{i.label}</span>
                     )}
                   </Link>
@@ -227,12 +264,12 @@ export default function Sidebar({
         {/* Usuario y preferencias */}
         <div
           className={`sidebar-footer space-y-1 border-t ${
-            collapsed ? 'p-2' : 'p-3'
+            isCollapsed ? 'p-2' : 'p-3'
           }`}
         >
           <div
             className={`sidebar-user mb-2 flex items-center ${
-              collapsed
+              isCollapsed
                 ? 'justify-center px-0'
                 : 'gap-3 px-2'
             }`}
@@ -249,7 +286,7 @@ export default function Sidebar({
               </span>
             )}
 
-            {!collapsed && (
+            {!isCollapsed && (
               <div className="min-w-0">
                 <div className="truncate text-sm font-semibold">
                   {name}
@@ -259,18 +296,17 @@ export default function Sidebar({
             )}
           </div>
 
-          {/* Tema */}
           <ThemeToggle
             bare
             className={`nav-btn w-full ${
-              collapsed ? '!justify-center !px-2' : ''
+              isCollapsed ? '!justify-center !px-2' : ''
             }`}
-            labelClass={collapsed ? 'hidden' : ''}
+            labelClass={isCollapsed ? 'hidden' : ''}
           />
 
           {/* Selector de idioma */}
-          <div className={collapsed ? 'px-0 py-2' : 'px-1 py-2'}>
-            {!collapsed && (
+          <div className={isCollapsed ? 'px-0 py-2' : 'px-1 py-2'}>
+            {!isCollapsed && (
               <div className="mb-2 px-1 text-xs font-medium text-slate-500">
                 {t.language}
               </div>
@@ -280,7 +316,7 @@ export default function Sidebar({
               language={language}
               saveLanguage={saveLanguage}
               errorMessage={t.saveError}
-              collapsed={collapsed}
+              collapsed={isCollapsed}
             />
           </div>
 
@@ -290,11 +326,11 @@ export default function Sidebar({
               type="submit"
               title={t.signOut}
               className={`nav-btn w-full ${
-                collapsed ? '!justify-center !px-2' : ''
+                isCollapsed ? '!justify-center !px-2' : ''
               }`}
             >
               <Icon name="out" className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{t.signOut}</span>}
+              {!isCollapsed && <span>{t.signOut}</span>}
             </button>
           </form>
         </div>
